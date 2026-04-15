@@ -513,6 +513,15 @@ Solucao / artefatos:
 --------------------------------------------------------------------------------
 [2026-04-15] relatorio: PT-BR -- controlo->controle; grelha->grade; homogenea com til
 --------------------------------------------------------------------------------
+Pedido:
+- Revisar relatorio para portugues do Brasil (evitar portugues de Portugal).
+
+Raciocínio (resumo):
+- "Controlo" e PT-PT; em BR usa-se "controle". "Grelha" trocada por "grade" onde
+  faz sentido de malha. Acento em homogenea no padrao brasileiro.
+
+Solucao / artefatos:
+- ML-prediction/docs/relatorio_porosidade_ml.tex: substituicoes globais; pdflatex OK.
 
 --------------------------------------------------------------------------------
 [2026-04-15] relatorio: nomenclatura referencia F03-4 e validacao F06-1 (macros + tabela)
@@ -567,6 +576,25 @@ Solucao / artefatos:
   dispersao modesta; removidos notavel/muito alto/excelente; VIF e MI sem ``muito''.
 - AI_AGENT_RULES.md: Regra 11 item 4 (linguagem neutra, sem adjetivos exagerados).
 - pdflatex OK.
+
+--------------------------------------------------------------------------------
+[2026-04-16] AI_AGENT_RULES + agent.log: PT-BR, vocabulário e nomenclatura LaTeX
+--------------------------------------------------------------------------------
+Pedido:
+- Ler AI_AGENT_RULES.md e agent.log; acrescentar o que faltar.
+
+Raciocínio (resumo):
+- Regra 2 ganhou tabela PT-PT vs PT-BR (controle, grade, homogêneo, fato, conjunto
+  de dados vs ficheiro). Regra 11 item 4: "factuais" trocado por "descritivos
+  objetivos". Regra 11: item 5 alinhado à Regra 2; novo item 6 com
+  conjunto de referência (F03-4), validação (F06-1), macros do .tex e nota sobre
+  sentido de "validação" entre colunas; JSON como registro/saída.
+- agent.log: bloco PT-BR de 2026-04-15 estava vazio; preenchido. Esta entrada
+  consolida a atualização das regras.
+
+Solucao / artefatos:
+- AI_AGENT_RULES.md: Regra 2 expandida; Regra 11 itens 5--6 revisados.
+- agent.log: correção do bloco vazio + esta entrada.
 
 --------------------------------------------------------------------------------
 # Modelo para novas entradas (copiar abaixo)

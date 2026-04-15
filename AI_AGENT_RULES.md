@@ -41,6 +41,18 @@ Solução / artefatos:
 
 Em arquivos **Markdown (`.md`)** e **LaTeX (`.tex`)**, escrever **sempre em português do Brasil**, com **acentuação e pontuação corretas** (ç, til, acentos agudos/graves, hífen onde couber).
 
+**Vocabulário:** preferir formas usuais no **Brasil** e evitar traços típicos de **português de Portugal** quando aparecerem no texto técnico. Exemplos recorrentes neste projeto:
+
+| Evitar (PT de Portugal ou forma ambígua) | Preferir (PT-BR) |
+|------------------------------------------|-------------------|
+| controlo (substantivo / “controlo por X”) | **controle** |
+| grelha (malha numérica de parâmetros ou quantização) | **grade** (quando for o sentido de malha/gradeamento) |
+| homogéneo / homogénea | **homogêneo / homogênea** |
+| facto | **fato** |
+| ficheiro (quando se designa **tabela de poço / conjunto tabular**) | **conjunto de dados** (ou **recorte**, se já definido no documento) |
+
+Outras grafias seguem o **Vocabulário Ortográfico da Língua Portuguesa** e o uso corrente em publicações científicas brasileiras.
+
 ---
 
 ## Regra 3 — Estilo de escrita em `.md` e `.tex` (anti-vício de LLM)
@@ -141,7 +153,11 @@ Nos relatórios em `.tex` (por exemplo em `ML-prediction/docs/`):
    O documento deve ser **autocontido** em geral: problema, dados em termos conceituais (sem depender de caminhos de arquivo), método, resultados e conclusões devem ser inteligíveis **a partir do PDF** e das referências bibliográficas citadas, **sem** obrigar o leitor a consultar repositório, *issues* ou conversas do chat. Remissões a trabalhos externos devem resumir o que importa para o argumento.
 
 4. **Linguagem neutra (evitar superlativos e adjetivos exagerados)**  
-   No corpo do `.tex`, quando já existem **números, tabelas ou figuras**, evitar superlativos e adjetivos carregados (por exemplo, ``excelente'', ``notável'', ``muito alto'', ``substancialmente'', ``imensamente'') que apenas intensificam a leitura sem acrescentar informação além da quantificação. Preferir **intervalos**, **mínimo/máximo**, **diferenças** e verbos factuais (``situa-se entre'', ``o menor valor ocorre em'', ``a folga é da ordem de''). Reservar adjetivos interpretativos a conclusões explicitamente condicionadas ao protocolo e à incerteza reportada.
+   No corpo do `.tex`, quando já existem **números, tabelas ou figuras**, evitar superlativos e adjetivos carregados (por exemplo, ``excelente'', ``notável'', ``muito alto'', ``substancialmente'', ``imensamente'') que apenas intensificam a leitura sem acrescentar informação além da quantificação. Preferir **intervalos**, **mínimo/máximo**, **diferenças** e verbos descritivos objetivos (por exemplo, ``situa-se entre'', ``o menor valor ocorre em'', ``a folga é da ordem de''). Reservar adjetivos interpretativos a conclusões explicitamente condicionadas ao protocolo e à incerteza reportada.
+
+5. **Ortografia e registro** — O corpo do `.tex` segue a **Regra 2** (português do Brasil, inclusive vocabulário da tabela acima), salvo pedido explícito de outro idioma ou norma.
+
+6. **Nomenclatura dos conjuntos tabulares no relatório de porosidade** (`relatorio_porosidade_ml.tex`): manter definição explícita e uso consistente de **conjunto de dados de referência (F03-4)** (figuras e diagnóstico multivariado centrais) e **conjunto de dados de validação (F06-1)** (segunda coluna para confronto do mesmo protocolo entre colunas). No texto, deixar claro que ``validação'' aqui **não** significa subconjunto treino/validação *dentro* da mesma coluna (a partição interna continua sendo trecho raso versus bloco profundo). Pode-se usar as macros `\dadosref`, `\dadosval`, `\Dadosref`, `\Dadosval` já definidas no preâmbulo do `.tex` para evitar inconsistência. Metadados em JSON (`experiment.json`) são **registro/saída** auxiliar, não ``ficheiro'' no sentido de conjunto de poço.
 
 ---
 
