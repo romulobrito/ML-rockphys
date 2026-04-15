@@ -18,15 +18,28 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.stats import kendalltau, rankdata, spearmanr
+from sklearn.isotonic import IsotonicRegression
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
 
 _SCRIPTS = Path(__file__).resolve().parent
 if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
 
 from exploratory_analysis import normalize_columns, read_table  # noqa: E402
+from run_metadata import write_experiment_json  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
+
+PARTIAL_CORR_NOTE = (
+    "Partial correlations here use OLS residuals: linear control only. "
+    "They do not imply general conditional independence of GR and Vc given controls."
+)
+
+MONOTONIC_NOTE = (
+    "Isotonic regression Vc ~ f(GR) with increasing=True quantifies how much of Vc "
+    "is recoverable from a monotone map of GR (nonparametric, univariate)."
+)
 
 RANK_METHODS = ("average", "min", "max")
 
@@ -231,6 +244,40 @@ def main() -> int:
         ]
     )
     summary.to_csv(out_dir / "summary_correlations.csv", index=False)
+
+    (out_dir / "interpretation_partial_correlation.txt").write_text(
+        PARTIAL_CORR_NOTE + "\n", encoding="utf-8"
+    )
+
+    # Monotone GR -> Vc (isotonic), same rows as aligned
+    iso = IsotonicRegression(increasing=True, out_of_bounds="clip")
+    iso.fit(gr, vc)
+    vc_hat = iso.predict(gr)
+    rmse_iso = float(np.sqrt(mean_squared_error(vc, vc_hat)))
+    r2_iso = float(r2_score(vc, vc_hat))
+    mono_df = pd.DataFrame(
+        [
+            {
+                "n": len(aligned),
+                "rmse_Vc_isotonic_GR": rmse_iso,
+                "R2_Vc_vs_isotonic_prediction": r2_iso,
+                "note": MONOTONIC_NOTE,
+            }
+        ]
+    )
+    mono_df.to_csv(out_dir / "gr_vc_monotonic_isotonic.csv", index=False)
+
+    write_experiment_json(
+        out_dir / "experiment.json",
+        {
+            "script": "gr_vc_rank_dependence.py",
+            "input_file": str(path),
+            "out_dir": str(out_dir),
+            "partial_corr_interpretation_file": "interpretation_partial_correlation.txt",
+            "monotonic_summary_file": "gr_vc_monotonic_isotonic.csv",
+        },
+        repo_root=ROOT.parent,
+    )
 
     # Figures
     fig, axes = plt.subplots(1, 2, figsize=(11, 4.5))

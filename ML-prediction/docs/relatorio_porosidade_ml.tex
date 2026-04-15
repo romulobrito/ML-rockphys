@@ -34,8 +34,8 @@ O ajuste emprega um modelo GBDT (\textit{Gradient Boosting Decision Trees}, conj
 de árvores de decisão com reforço por gradiente, aqui na variante baseada em
 histogramas). A avaliação usa partição treino--teste ao longo da profundidade,
 ablações de preditores e diagnóstico multivariado: correlações de Pearson
-e de Spearman, fator de inflação da variância (VIF), informação mútua
-(MI) entre cada preditor e a porosidade, importância por permutação do
+e de Spearman e fator de inflação da variância (VIF) no treino; informação mútua
+(MI) entre cada preditor e a porosidade também no treino; importância por permutação do
 coeficiente de determinação (\(R^2\)) no teste, e valores SHAP
 (\textit{SHapley Additive exPlanations}, decomposição aditiva do efeito de cada
 preditor com base em Shapley). Complementam o quadro, no conjunto de teste profundo,
@@ -148,12 +148,14 @@ Adotou-se o recorte F03-4 como estudo principal e o F06-1 como contraste qualita
 O procedimento computacional segue a cadeia ilustrada na Figura~\ref{fig:fluxo}, lida
 de cima para baixo: primeiro consolidam-se tabela de preditores e alvo; em seguida
 remove-se linhas incompletas; depois separa-se o trecho mais profundo para teste,
-mantendo o trecho mais raso para treino; aplica-se padronização \textit{z-score}
-no treino; estima-se o modelo GBDT já definido no resumo; calculam-se
+mantendo o trecho mais raso para treino; estima-se o \textit{Gradient Boosting}
+em histogramas (GBDT) \textbf{sem} padronização \textit{z-score} nas features,
+por coerência com modelos baseados em árvores (a padronização permanece disponível
+no código apenas para comparações opcionais com modelos lineares); calculam-se
 MAE~\eqref{eq:mae}, RMSE~\eqref{eq:rmse} e \(R^2\)~\eqref{eq:r2} no teste, com variantes
 por ablação;
-por fim, executa-se o bloco de diagnóstico multivariado (correlações, VIF,
-MI, permutação e SHAP) sobre o mesmo conjunto de teste. A avaliação por
+por fim, executa-se o bloco de diagnóstico multivariado (correlações e VIF no treino,
+MI no treino, permutação e SHAP no teste profundo). A avaliação por
 permutação insere-se nesse último bloco, pois reutiliza o modelo ajustado e
 as partições fixas.
 
@@ -167,7 +169,7 @@ as partições fixas.
 \node[box] (d) {Dados tabulares\\(preditor + alvo)};
 \node[box, below=of d] (c) {Limpeza e\\alinhamento em profundidade};
 \node[box, below=of c] (s) {Partição\\treino / teste (bloco profundo)};
-\node[box, below=of s] (p) {Padronização\\e modelo GBDT};
+\node[box, below=of s] (p) {GBDT\\(sem escalonamento)};
 \node[box, below=of p] (m) {Métricas e\\ablações opcionais};
 \node[box, below=of m] (x) {Diagnóstico multivariado\\(correlação, VIF, MI, permutação, SHAP)};
 \draw[arr] (d) -- (c);
@@ -185,17 +187,18 @@ bloco fixa o universo de variáveis e o alvo; o segundo evita lacunas artificiai
 que distorceriam correlações; o terceiro impõe que o teste seja geograficamente
 contí nuo na profundidade, o que aproxima o protocolo de um cenário em que se
 prevê porosidade abaixo de uma profundidade de corte usando apenas informação
-mais rasa. O quarto bloco aplica a padronização \textit{z-score} aprendida no
-treino e estima o GBDT, passo necessário porque AC, \(\rho_b\), AI e \(V_p\) têm
-ordens de grandeza distintas; as predições nesse bloco alimentam as curvas da
+mais rasa. O quarto bloco estima o GBDT diretamente nas features físicas (sem
+escalonamento obrigatório); as predições nesse bloco alimentam as curvas da
 Secção~\ref{sec:resultados}. O quinto bloco calcula MAE, RMSE e \(R^2\) no teste
 profundo e registra variantes sem \(V_p\) ou sem AI. O sexto bloco quantifica
-redundância e sensibilidade: as matrizes de correlação resumem acoplamento
-linear ou monótono; o VIF mede quasi-colinearidade num sistema linear auxiliar; a
+redundância e sensibilidade: as matrizes de correlação (treino) resumem acoplamento
+linear ou monótono; o VIF mede quasi-colinearidade num sistema linear auxiliar
+ajustado ao treino; a
 MI mede dependência estatí stica (não necessariamente linear) de cada preditor
-com a porosidade; a permutação mede o quanto o \(R^2\) degrada ao destruir
+com a porosidade \textbf{no treino}; a permutação mede o quanto o \(R^2\) degrada ao destruir
 informação de um preditor de cada vez; o SHAP decompõe predições em
-contribuições aditivas locais. Assim, a Figura~\ref{fig:fluxo} não dispensa a
+contribuições aditivas locais no \textbf{espaço de entrada do modelo} (coincidente com as
+features originais neste protocolo). Assim, a Figura~\ref{fig:fluxo} não dispensa a
 narração: orienta a ordem em que os resultados das Secções~\ref{sec:resultados}
 e~\ref{sec:discussao} devem ser lidos.
 
@@ -225,29 +228,36 @@ variação das métricas sob reamostragem das observações de teste, \textbf{n�
 \subsection{Diagnóstico multivariado}\label{subsec:featstudy}
 Para cada preditor \(j\) do conjunto elástico, o fator de inflação da
 variância (VIF) foi calculado a partir de uma regressão auxiliar linear de \(x_j\)
-face aos demais preditores, com
+face aos demais preditores \textbf{no conjunto de treino} (bloco raso), com
 \begin{equation}\label{eq:vif}
 \mathrm{VIF}_j = \frac{1}{1-R_j^2},
 \end{equation}
 em que \(R_j^2\) é o coeficiente de determinação dessa regressão auxiliar.
 Valores muito elevados indicam que \(x_j\) é quase combinação linear dos
 outros preditores. Complementarmente, calcularam-se matrizes de correlação de
-Pearson e de Spearman, a informação mútua (MI, \textit{mutual information})
-entre cada preditor e a porosidade, a importância por permutação da queda de
+Pearson e de Spearman \textbf{no treino} (figuras do recorte principal), a informação mútua (MI, \textit{mutual information})
+entre cada preditor e a porosidade \textbf{também no treino}, a importância por permutação da queda de
 \(R^2\) no teste e um resumo SHAP (\textit{SHapley Additive exPlanations}) obtido com
-explicador de árvore aplicado ao modelo GBDT ajustado. Estes passos usam o mesmo
-conjunto de teste profundo já definido, de modo que as leituras permanecem
-comparáveis entre si.
+explicador de árvore aplicado ao modelo GBDT ajustado. As correlações no conjunto completo
+(antes do corte) são exportadas como ficheiro auxiliar para EDA, mas não substituem as
+matrizes do treino nas figuras reportadas. A permutação e o SHAP reutilizam o mesmo modelo
+e o mesmo teste profundo. Sobre as features standardizadas do treino, uma PCA sintética
+indica que as duas primeiras componentes explicam cerca de \(99{,}9\%\) da variância acumulada,
+coerente com subespaço elástico de dimensão efetiva baixa; o número de condição (norma espectral)
+da matriz de correlação do treino é da ordem de \(10^7\), sinal de matriz mal condicionada
+alinhado aos VIF extremos.
 
 \section{Premissas e limitações}\label{sec:premissas}
 
 As curvas e a porosidade tratam-se como co-registradas na profundidade informada,
-sem corrigir deslocamentos instrumentais. A limitação metodológica central
-é a ausência de validação com exclusão de poço: o protocolo é, por
-construção, \textbf{intra-coluna}. O teste profundo não substitui validação
-entre poços com exclusão mútua de treino: o contraste entre recortes, mostrado
-na Figura~\ref{fig:f06}, compara qualidade de ajuste interno a cada coluna, não
-transferência aprendida numa coluna e testada na outra. Por fim, \(R^2\) alto pode refletir acoplamento fí sico e redundância
+sem corrigir deslocamentos instrumentais. O protocolo principal permanece, por
+construção, \textbf{intra-coluna} (corte vertical num único ficheiro). O ensaio
+\textit{leave-one-well-out} da Tabela~\ref{tab:loo_well} aproxima exclusão mútua
+entre ficheiros, mas com apenas quatro poços não substitui um estudo de campo
+exaustivo: os \(R^2\) por linha variam e um caso (F02-1 como teste) desvia
+substancialmente dos demais. O contraste entre recortes na Figura~\ref{fig:f06}
+compara qualidade de ajuste interno a cada coluna, não transferência aprendida
+numa coluna e testada na outra. Por fim, \(R^2\) alto pode refletir acoplamento fí sico e redundância
 estatí stica, não independência informacional entre preditores. A informação
 mútua estimada por \texttt{mutual\_info\_regression} (mesma pilha numérica do
 ensaio) tem \textbf{magnitude absoluta} sensível a hiperparâmetros internos do
@@ -313,6 +323,42 @@ das réplicas.}
 \label{tab:bootstrap_ic}
 \end{table}
 
+\subsubsection{Robustez ao corte em profundidade}
+Mantendo o mesmo GBDT e o ficheiro F03-4, repetiu-se a partição com frações de teste
+profundo de \(15\%\), \(20\%\) e \(25\%\). O \(R^2\) no teste oscilou entre \(0{,}988\) e
+\(0{,}993\) (MAE e RMSE na mesma ordem de grandeza), o que indica que a conclusão de
+ajuste forte \textbf{não} depende de um único ponto de corte na grelha considerada.
+Com \texttt{max\_depth} \(\in \{4,6,8\}\) e demais hiperparâmetros fixos, o \(R^2\) no
+mesmo corte de \(20\%\) permanece na casa de \(0{,}988\), sugerindo que a leitura de
+redundância marginal não está ancorada num único valor de profundidade de árvore.
+
+\subsubsection{Exclusão mútua entre poços (\textit{leave-one-well-out})}
+Para aproximar a crítica de generalização \textbf{entre} colunas, treinou-se o mesmo tipo
+de GBDT na união de três ficheiros 7logs e testou-se no quarto, percorrendo os quatro
+poços disponíveis (F02-1, F03-2, F03-4, F06-1). O \(R^2\) no poço retido varia
+substancialmente (Tabela~\ref{tab:loo_well}): permanece elevado quando o teste é
+F03-2, F03-4 ou F06-1, mas cai para cerca de \(0{,}96\) quando o teste é F02-1, o que
+reforça que ``\(R^2\) alto'' não é garantia automática de transferência entre contextos
+litológicos e instrumentais distintos.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lrrrr}
+\toprule
+Poço retido (teste) & \(n_{\mathrm{treino}}\) & \(n_{\mathrm{teste}}\) & MAE & \(R^2\) \\
+\midrule
+F02-1 & 3595 & 445 & 0{,}00311 & 0{,}960 \\
+F03-2 & 2456 & 1584 & 0{,}00030 & 0{,}996 \\
+F03-4 & 2605 & 1435 & 0{,}00011 & 0{,}999 \\
+F06-1 & 3464 & 576 & 0{,}00013 & 1{,}000$^\ast$ \\
+\bottomrule
+\end{tabular}
+\caption{LOO entre quatro ficheiros 7logs: treino na união dos outros três, teste no poço da linha.
+$^\ast$Arredondamento a três casas; valor pontual \(0{,}999845\).}
+\label{tab:loo_well}
+\end{table}
+
 \subsection{Perfil de porosidade observada e prevista}
 As Figuras~\ref{fig:f03vp} a~\ref{fig:f03svpai} mostram, para o recorte principal,
 a porosidade observada e a curva prevista ao longo da profundidade, com linha de
@@ -375,7 +421,7 @@ ser tomados como magnitudes calibradas de um modelo linear final. Dado o nível
 extremo de colinearidade, os \textbf{valores absolutos} de VIF perdem interesse
 quantitativo fino e devem ser lidos apenas como \textbf{marcadores de degenerescência
 severa} do sistema linear auxiliar; comparações finas entre, por exemplo,
-\(8{,}5\times 10^5\) e \(1{,}3\times 10^5\) não devem ser interpretadas como diferença
+\(7{,}0\times 10^5\) e \(1{,}1\times 10^5\) não devem ser interpretadas como diferença
 substancial de ``grau de colinearidade''. Para GR e \(V_c\), os VIF permanecem elevados
 face ao limiar usual da ordem de dez, coerente com a forte associação mútua
 observada nas matrizes.
@@ -386,15 +432,15 @@ observada nas matrizes.
 \toprule
 Preditor & VIF (ordem de grandeza) \\
 \midrule
-AC & $8{,}5 \times 10^5$ \\
-$\rho_b$ & $8{,}5 \times 10^5$ \\
-Impedância & $1{,}3 \times 10^5$ \\
-$V_p$ & $1{,}3 \times 10^5$ \\
-GR & $7{,}9 \times 10^1$ \\
-$V_c$ & $7{,}8 \times 10^1$ \\
+AC & $7{,}0 \times 10^5$ \\
+$\rho_b$ & $7{,}0 \times 10^5$ \\
+Impedância & $1{,}1 \times 10^5$ \\
+$V_p$ & $1{,}1 \times 10^5$ \\
+GR & $8{,}3 \times 10^1$ \\
+$V_c$ & $8{,}2 \times 10^1$ \\
 \bottomrule
 \end{tabular}
-\caption{Fatores VIF aproximados no recorte principal, calculados por~\eqref{eq:vif}.}
+\caption{Fatores VIF aproximados no recorte principal (treino, bloco raso), calculados por~\eqref{eq:vif}.}
 \label{tab:vif}
 \end{table}
 
@@ -449,7 +495,8 @@ Spearman + \textit{jitter} & média de 80 sorteios & 0{,}999992 \\
 \bottomrule
 \end{tabular}
 \caption{Associação GR--\(V_c\) e correlações parciais lineares (resíduos
-OLS). Com monotonia empí rica quase perfeita entre GR e \(V_c\), os \(p\)-valores
+OLS; controlo \textbf{linear} apenas, sem equivalência a independência condicional geral).
+Com monotonia empí rica quase perfeita entre GR e \(V_c\), os \(p\)-valores
 dos testes de Spearman e de Kendall (hipótese de independência) ficam abaixo do
 que a aritmética de ponto flutuante distingue de zero, aparecendo como \(0\) na
 tabela.}
@@ -481,7 +528,10 @@ a mesma fração de linhas em empates e a mesma multiplicidade máxima, o que
 mesma grelha de quantização. A Tabela~\ref{tab:grvc_assoc} confirma uma relação
 quase monótona perfeita (Spearman e Kendall unitários) e mantém correlação
 parcial elevada mesmo depois de linearizar profundidade ou o bloco elástico, pelo
-menos no esquema de controlo linear adotado. \textbf{No recorte principal, GR e \(V_c\)
+menos no esquema de controlo linear adotado. Uma regressão isotônica crescente
+\(V_c \approx f(\mathrm{GR})\) ajustada aos mesmos dados atinge \(R^2\) praticamente
+unitário e erro de reconstrução desprezível na precisão numérica exportada, o que
+quantifica a redundância monótona além das correlações clássicas. \textbf{No recorte principal, GR e \(V_c\)
 não devem ser tratados como eixos independentes de informação:} a evidência
 sugere que um deles é, na prática, quase inteiramente reconstruí vel a partir do
 outro, de modo que mantê-los simultaneamente pode inflar artificialmente a dimensão
@@ -514,8 +564,8 @@ relevante da MI é \textbf{ordinal e comparativa} entre preditores (ordenação 
 separação entre blocos), e não o valor absoluto em nats como grandeza
 transportável entre estudos. A Tabela~\ref{tab:mi_por} quantifica essa separação:
 os quatro preditores elásticos
-ficam na casa de \(5{,}5\) nats (arredondamento à segunda casa), enquanto GR e
-\(V_c\) permanecem perto de \(0{,}50\), isto é, magnitudes cerca de dez vezes
+ficam na casa de \(5{,}3\) nats (arredondamento à segunda casa; MI estimada no treino), enquanto GR e
+\(V_c\) permanecem perto de \(0{,}51\), isto é, magnitudes cerca de dez vezes
 menores no mesmo ajuste MI. Isto reforça que, \textbf{no recorte principal}, o
 bloco elástico compartilha quase o mesmo conteúdo informativo sobre o alvo, ao
 passo que GR e \(V_c\) introduzem um eixo litológico mais fraco neste recorte, sem
@@ -527,16 +577,16 @@ ser nulo.
 \toprule
 Preditor & MI com porosidade (nats, arred.) \\
 \midrule
-AC & 5{,}54 \\
-\(\rho_b\) & 5{,}67 \\
-AI & 5{,}52 \\
-\(V_p\) & 5{,}53 \\
-GR & 0{,}50 \\
-\(V_c\) & 0{,}50 \\
+AC & 5{,}30 \\
+\(\rho_b\) & 5{,}43 \\
+AI & 5{,}28 \\
+\(V_p\) & 5{,}30 \\
+GR & 0{,}52 \\
+\(V_c\) & 0{,}51 \\
 \bottomrule
 \end{tabular}
-\caption{MI estimada no conjunto completo antes da partição (mesma corrida que
-gera as figuras de correlação). Valores arredondados; ver limitações na
+\caption{MI estimada no conjunto de treino (bloco raso, mesma partição que as
+Figuras~\ref{fig:pearson}--\ref{fig:spearman}). Valores arredondados; ver limitações na
 Secção~\ref{sec:premissas}.}
 \label{tab:mi_por}
 \end{table}
@@ -575,7 +625,9 @@ GR & \(-9{,}1\times 10^{-4}\) & \(3{,}3\times 10^{-4}\) \\
 \(V_c\) & 0{,}000 & 0{,}000 \\
 \bottomrule
 \end{tabular}
-\caption{Importância por permutação no teste profundo (25 repetições).}
+\caption{Importância por permutação no teste profundo (25 repetições). O ficheiro
+exportado inclui a coluna booleana \texttt{likely\_redundant\_or\_noise} quando a
+queda média de \(R^2\) não é positiva.}
 \label{tab:perm_r2}
 \end{table}
 

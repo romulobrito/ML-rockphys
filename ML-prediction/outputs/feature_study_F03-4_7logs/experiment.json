@@ -1,0 +1,22 @@
+{
+  "timestamp_utc": "2026-04-15T18:29:54.150685+00:00",
+  "git_rev": "122fd91",
+  "script": "feature_relationship_study.py",
+  "file": "/home/romulo/Documentos/lenep-rockphys/ML-prediction/data/F03-4_7logs.txt",
+  "n_rows": 1435,
+  "train_n": 1148,
+  "test_n": 287,
+  "test_fraction": 0.2,
+  "features": [
+    "AC",
+    "Rho_b",
+    "AI",
+    "Vp",
+    "GR",
+    "Vc"
+  ],
+  "out_dir": "/home/romulo/Documentos/lenep-rockphys/ML-prediction/outputs/feature_study_F03-4_7logs",
+  "use_scaler": false,
+  "mi_primary_split": "train",
+  "corr_heatmaps_split": "train"
+}

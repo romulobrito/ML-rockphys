@@ -1,0 +1,1 @@
+Partial correlations here use OLS residuals: linear control only. They do not imply general conditional independence of GR and Vc given controls.

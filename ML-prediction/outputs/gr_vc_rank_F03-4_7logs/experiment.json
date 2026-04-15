@@ -1,0 +1,9 @@
+{
+  "timestamp_utc": "2026-04-15T18:29:57.681850+00:00",
+  "git_rev": "122fd91",
+  "script": "gr_vc_rank_dependence.py",
+  "input_file": "/home/romulo/Documentos/lenep-rockphys/ML-prediction/data/F03-4_7logs.txt",
+  "out_dir": "/home/romulo/Documentos/lenep-rockphys/ML-prediction/outputs/gr_vc_rank_F03-4_7logs",
+  "partial_corr_interpretation_file": "interpretation_partial_correlation.txt",
+  "monotonic_summary_file": "gr_vc_monotonic_isotonic.csv"
+}

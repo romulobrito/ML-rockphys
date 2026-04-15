@@ -1,0 +1,2 @@
+n,rmse_Vc_isotonic_GR,R2_Vc_vs_isotonic_prediction,note
+1435,8.021586893287472e-18,1.0,"Isotonic regression Vc ~ f(GR) with increasing=True quantifies how much of Vc is recoverable from a monotone map of GR (nonparametric, univariate)."

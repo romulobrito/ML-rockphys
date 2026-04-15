@@ -424,6 +424,38 @@ Solucao / artefatos:
   script-saida-figs, riscos, ordem de implementacao, sincronizacao relatorio).
 
 --------------------------------------------------------------------------------
+[2026-04-15] Implementacao do plano metodologico (scripts + LaTeX + pipeline)
+--------------------------------------------------------------------------------
+Pedido:
+- Implementar o plano em PLANO_MELHORIAS_METODOLOGIA.md de forma criteriosa,
+  regenerar resultados e alinhar relatorio_porosidade_ml.tex.
+
+Raciocinio (resumo):
+- Fase A: run_metadata.py; GBDT sem StandardScaler por defeito (--use-scaler opcional);
+  feature_relationship alinhado ao mesmo build_pipeline.
+- Fase B: MI e VIF no treino; LOO em quatro 7logs; grelha de cortes 0.15/0.2/0.25;
+  isotona GR->Vc + nota sobre correlacao parcial; sensibilidade max_depth 4,6,8.
+- Fase C: PCA e numero de condicao no treino; SHAP na matriz de entrada do modelo;
+  coluna likely_redundant_or_noise na permutacao.
+- Fase D: exploratory_analysis --data-dir/--out-dir; mapas Pearson e Spearman separados;
+  run_report_pipeline.py (usa .venv/bin/python se existir); copia figs para docs/figs/;
+  bootstrap 2000 F03-4 no fim do pipeline.
+- LaTeX: metodologia sem z-score obrigatorio; tabelas MI/VIF/LOO; robustez corte e
+  max_depth; premissas atualizadas; isotona e legenda correlacao parcial.
+
+Solucao / artefatos:
+- ML-prediction/scripts/run_metadata.py (novo)
+- ML-prediction/scripts/run_report_pipeline.py (novo)
+- porosity_baseline.py, feature_relationship_study.py, gr_vc_rank_dependence.py,
+  exploratory_analysis.py (alterados)
+- Novos CSV: depth_cut_sensitivity_*.csv, gbdt_max_depth_sensitivity_*.csv,
+  loo_well_metrics.csv, gr_vc_monotonic_isotonic.csv, interpretation_partial_correlation.txt,
+  experiment.json nos outputs relevantes, pca_*, feature_condition_train.csv,
+  mutual_info_porosity_train.csv, corr_*_full_sample.csv
+- ML-prediction/docs/relatorio_porosidade_ml.tex, PDF 22 paginas; figs atualizadas
+- Teste ponta a ponta: run_report_pipeline.py --skip-eda (sucesso).
+
+--------------------------------------------------------------------------------
 # Modelo para novas entradas (copiar abaixo)
 # --------------------------------------------------------------------------------
 # [AAAA-MM-DD] Titulo curto

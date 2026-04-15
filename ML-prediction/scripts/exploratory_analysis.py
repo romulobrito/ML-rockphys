@@ -6,6 +6,7 @@ and writes figures under ../eda_output/.
 
 from __future__ import annotations
 
+import argparse
 import sys
 from pathlib import Path
 
@@ -17,8 +18,8 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-DATA_DIR = Path(__file__).resolve().parent.parent / "data"
-OUT_DIR = Path(__file__).resolve().parent.parent / "eda_output"
+_DEFAULT_DATA = Path(__file__).resolve().parent.parent / "data"
+_DEFAULT_OUT = Path(__file__).resolve().parent.parent / "eda_output"
 
 COLUMN_ALIASES_6LOGS = {
     "Depth(m)": "Depth_m",
@@ -92,11 +93,13 @@ def numeric_features(df: pd.DataFrame) -> list[str]:
     return num
 
 
-def plot_correlation(df: pd.DataFrame, title: str, outfile: Path) -> None:
+def plot_correlation(
+    df: pd.DataFrame, title: str, outfile: Path, method: str = "pearson"
+) -> None:
     feats = numeric_features(df)
     if len(feats) < 2:
         return
-    corr = df[feats].corr()
+    corr = df[feats].corr(method=method)
     plt.figure(figsize=(max(6, len(feats) * 0.5), max(5, len(feats) * 0.45)))
     sns.heatmap(corr, annot=True, fmt=".2f", cmap="coolwarm", center=0, square=True)
     plt.title(title)
@@ -150,10 +153,28 @@ def file_report(path: Path) -> dict:
 
 
 def main() -> int:
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    paths = sorted(DATA_DIR.glob("*.txt"))
+    parser = argparse.ArgumentParser(
+        description="EDA: catalog well TSV files, summaries, correlation heatmaps, histograms."
+    )
+    parser.add_argument(
+        "--data-dir",
+        type=str,
+        default=str(_DEFAULT_DATA),
+        help="Directory containing *.txt well log tables.",
+    )
+    parser.add_argument(
+        "--out-dir",
+        type=str,
+        default=str(_DEFAULT_OUT),
+        help="Directory for summary CSV and PNG outputs.",
+    )
+    args = parser.parse_args()
+    data_dir = Path(args.data_dir).resolve()
+    out_dir = Path(args.out_dir).resolve()
+    out_dir.mkdir(parents=True, exist_ok=True)
+    paths = sorted(data_dir.glob("*.txt"))
     if not paths:
-        print("No .txt files in", DATA_DIR, file=sys.stderr)
+        print("No .txt files in", data_dir, file=sys.stderr)
         return 1
 
     print("=== Catalogo de arquivos (todos) ===\n")
@@ -181,7 +202,7 @@ def main() -> int:
         )
     summary_df = pd.DataFrame(rows_summary)
     print(summary_df.to_string(index=False))
-    summary_path = OUT_DIR / "summary_all_files.csv"
+    summary_path = out_dir / "summary_all_files.csv"
     summary_df.to_csv(summary_path, index=False)
     print(f"\nTabela salva: {summary_path}")
 
@@ -202,24 +223,26 @@ def main() -> int:
         print("\ndescribe():")
         print(rep["describe"].to_string())
 
-    # Figures: one correlation + histograms per file (small dataset)
+    # Figures: Pearson and Spearman correlation maps + histograms per file
     for rep in reports:
-        p = DATA_DIR / rep["path"]
+        p = data_dir / rep["path"]
         raw = read_table(p)
         df, schema = normalize_columns(raw)
         safe_name = rep["path"].replace(",", "_").replace(" ", "_")
-        plot_correlation(
-            df,
-            f"{rep['path']} | {schema}",
-            OUT_DIR / f"corr_{safe_name}.png",
-        )
+        for method, tag in (("pearson", "pearson"), ("spearman", "spearman")):
+            plot_correlation(
+                df,
+                f"{rep['path']} | {schema} | {tag}",
+                out_dir / f"corr_{safe_name}_{tag}.png",
+                method=method,
+            )
         plot_histograms(
             df,
             f"{rep['path']} | {schema}",
-            OUT_DIR / f"hist_{safe_name}.png",
+            out_dir / f"hist_{safe_name}.png",
         )
 
-    print(f"\nFiguras PNG em: {OUT_DIR}")
+    print(f"\nFiguras PNG em: {out_dir}")
     return 0
 
 
