@@ -241,7 +241,7 @@ face aos demais preditores \textbf{no conjunto de treino} (bloco raso), com
 \mathrm{VIF}_j = \frac{1}{1-R_j^2},
 \end{equation}
 em que \(R_j^2\) é o coeficiente de determinação dessa regressão auxiliar.
-Valores muito elevados indicam que \(x_j\) é quase combinação linear dos
+Valores elevados indicam que \(x_j\) é quase combinação linear dos
 outros preditores. Complementarmente, calcularam-se matrizes de correlação de
 Pearson e de Spearman \textbf{no treino} (figuras do recorte principal), a informação mútua (MI, \textit{mutual information})
 entre cada preditor e a porosidade \textbf{também no treino}, a importância por permutação da queda de
@@ -268,9 +268,9 @@ construção, \textbf{intra-coluna} (corte vertical num único conjunto tabular)
 em cada rodada treina-se com a união de todos os \emph{outros} recortes tabulares e avalia-se
 somente no poço que ficou de fora do treino), apresentada na Tabela~\ref{tab:loo_well}, aproxima a exclusão mútua
 entre conjuntos tabulares distintos, mas com apenas quatro poços não substitui um estudo de campo
-exaustivo: os \(R^2\) por linha variam e um caso (F02-1 como teste) desvia
-substancialmente dos demais, \textbf{sem deixar de indicar ajuste ainda muito forte} naquele poço
-isoladamente. O contraste entre recortes na Figura~\ref{fig:f06}
+exaustivo: os \(R^2\) por linha oscilam num intervalo estreito (todos acima de \(0{,}96\));
+o caso em que o poço F02-1 fica reservado para teste apresenta o menor valor desse conjunto,
+sem deixar, contudo, de corresponder a ajuste elevado em termos absolutos. O contraste entre recortes na Figura~\ref{fig:f06}
 compara qualidade de ajuste interno a cada coluna, não transferência aprendida
 numa coluna e testada na outra. Por fim, \(R^2\) alto pode refletir acoplamento físico e redundância
 estatística, não independência informacional entre preditores. A informação
@@ -342,7 +342,7 @@ das réplicas.}
 Mantendo o mesmo GBDT no recorte principal (F03-4), repetiu-se a partição com frações de teste
 profundo de \(15\%\), \(20\%\) e \(25\%\). O \(R^2\) no teste oscilou entre \(0{,}988\) e
 \(0{,}993\) (MAE e RMSE na mesma ordem de grandeza), o que indica que a conclusão de
-ajuste forte \textbf{não} depende de um único ponto de corte na grelha considerada.
+encaixe elevado no teste \textbf{não} depende de um único ponto de corte na grelha considerada.
 Com profundidade máxima das árvores \(\in \{4,6,8\}\) e demais hiperparâmetros fixos, o \(R^2\) no
 mesmo corte de \(20\%\) permanece na casa de \(0{,}988\), sugerindo que a leitura de
 redundância marginal não está ancorada num único valor de profundidade de árvore.
@@ -351,13 +351,13 @@ redundância marginal não está ancorada num único valor de profundidade de á
 Para aproximar a crítica de generalização \textbf{entre} colunas, aplicou-se a validação
 \textbf{LOO} já definida nas premissas: em cada passo, treina-se o mesmo tipo de GBDT na união
 de três recortes tabulares 7logs e testa-se no quarto, percorrendo os quatro
-poços disponíveis (F02-1, F03-2, F03-4, F06-1). O \(R^2\) no poço retido varia
-de forma notável (Tabela~\ref{tab:loo_well}): permanece muito alto quando o teste é
-F03-2, F03-4 ou F06-1, enquanto, quando o teste é F02-1, o \(R^2\) situa-se perto de \(0{,}96\),
-ainda indicador de \textbf{excelente} ajuste em termos absolutos, porém \textbf{inferior} aos
-outros três casos neste protocolo. Isto reforça que ``\(R^2\) alto'' não traduz, por si só,
-garantia de \textbf{mesma} qualidade de transferência entre contextos litológicos e instrumentais
-distintos, nem impede variação entre poços.
+poços disponíveis (F02-1, F03-2, F03-4, F06-1). Na Tabela~\ref{tab:loo_well}, o \(R^2\) no
+poço retido situa-se entre \(0{,}960\) e \(0{,}999\): os quatro valores são elevados e
+diferem sobretudo na terceira casa decimal, com o mínimo quando o teste é F02-1. A
+dispersão é modesta em escala absoluta, mas suficiente para mostrar que o coeficiente
+\textbf{não} é constante entre poços neste protocolo. Isto reforça que ``\(R^2\) alto'' não
+equivale, por si só, a \textbf{mesma} qualidade de transferência entre contextos litológicos
+e instrumentais distintos.
 
 \begin{table}[h]
 \centering
@@ -577,7 +577,7 @@ em cada célula (seis casas decimais).}
 
 \subsection{Informação mútua, permutação e SHAP}
 A informação mútua (MI) entre cada preditor e a porosidade concentra-se em valores
-elevados e muito próximos entre si para AC, \(\rho_b\), impedância e \(V_p\),
+elevados e próximos entre si para AC, \(\rho_b\), impedância e \(V_p\),
 enquanto GR e \(V_c\) ficam num patamar inferior, porém não nulos. A leitura
 relevante da MI é \textbf{ordinal e comparativa} entre preditores (ordenação e
 separação entre blocos), e não o valor absoluto em nats como grandeza

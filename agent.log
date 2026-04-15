@@ -511,6 +511,19 @@ Solucao / artefatos:
 - pdflatex OK.
 
 --------------------------------------------------------------------------------
+[2026-04-15] LaTeX: linguagem neutra LOO; Regra 11 item 4 em AI_AGENT_RULES
+--------------------------------------------------------------------------------
+Pedido:
+- Corrigir texto LOO: R2 sempre acima de 0,96; evitar superlativos; nova regra no
+  AI_AGENT_RULES.md para LaTeX.
+
+Solucao / artefatos:
+- relatorio_porosidade_ml.tex: premissas e paragrafo LOO com intervalos numericos e
+  dispersao modesta; removidos notavel/muito alto/excelente; VIF e MI sem ``muito''.
+- AI_AGENT_RULES.md: Regra 11 item 4 (linguagem neutra, sem adjetivos exagerados).
+- pdflatex OK.
+
+--------------------------------------------------------------------------------
 # Modelo para novas entradas (copiar abaixo)
 # --------------------------------------------------------------------------------
 # [AAAA-MM-DD] Titulo curto

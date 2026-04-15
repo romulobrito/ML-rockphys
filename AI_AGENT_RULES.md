@@ -140,6 +140,9 @@ Nos relatórios em `.tex` (por exemplo em `ML-prediction/docs/`):
 3. **Texto autocontido**  
    O documento deve ser **autocontido** em geral: problema, dados em termos conceituais (sem depender de caminhos de arquivo), método, resultados e conclusões devem ser inteligíveis **a partir do PDF** e das referências bibliográficas citadas, **sem** obrigar o leitor a consultar repositório, *issues* ou conversas do chat. Remissões a trabalhos externos devem resumir o que importa para o argumento.
 
+4. **Linguagem neutra (evitar superlativos e adjetivos exagerados)**  
+   No corpo do `.tex`, quando já existem **números, tabelas ou figuras**, evitar superlativos e adjetivos carregados (por exemplo, ``excelente'', ``notável'', ``muito alto'', ``substancialmente'', ``imensamente'') que apenas intensificam a leitura sem acrescentar informação além da quantificação. Preferir **intervalos**, **mínimo/máximo**, **diferenças** e verbos factuais (``situa-se entre'', ``o menor valor ocorre em'', ``a folga é da ordem de''). Reservar adjetivos interpretativos a conclusões explicitamente condicionadas ao protocolo e à incerteza reportada.
+
 ---
 
 ## Referências rápidas
