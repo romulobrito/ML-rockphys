@@ -1,0 +1,401 @@
+# agent.log - project memory (summarized history)
+# Purpose: retain decisions, premises, and work done across sessions or IDE windows.
+# Update: append new dated blocks; keep entries short and factual.
+
+--------------------------------------------------------------------------------
+[2026-04-14] Session - ML-prediction / rock physics context
+--------------------------------------------------------------------------------
+
+Context:
+- Workspace: lenep-rockphys (not a git repo at time of creation).
+- User focus: ML on well-log style tabular data; PDF Tech Report 2 (UENF/LENEP)
+  section 5 = Digital Rock Physics (micro-CT, GeoDict, multiscale workflow).
+
+Premises / constraints (from user rules):
+- Prefer Portuguese for user-facing explanations in chat.
+- Source code, comments, docstrings, log strings: ASCII only.
+- Python unless stated otherwise; strict typing when coding; minimal scope changes.
+
+Decisions:
+- Virtual env path: ML-prediction/.venv
+- Dependencies file: ML-prediction/requirements.txt
+  Stack: numpy, pandas, scipy, scikit-learn, joblib, xgboost, lightgbm,
+  matplotlib, seaborn, ipykernel, shap.
+
+Artifacts created:
+- ML-prediction/requirements.txt
+- ML-prediction/.venv (installed packages from requirements)
+- ML-prediction/scripts/exploratory_analysis.py
+  - Reads all ML-prediction/data/*.txt (TSV), detects 3 schema families:
+    (1) 7logs: Depth, AC, Rho_b, AI, Vp, Porosity, GR, Vc
+    (2) 6logs: Sonic, Density, Gamma_Ray, P_Impedance, Vp, Vc
+    (3) 3logs: AC, GR, Porosity
+  - Normalizes 7logs third column by position (encoding issues in headers).
+  - Writes ML-prediction/eda_output/summary_all_files.csv and PNGs (corr_*, hist_*).
+
+EDA findings (high level):
+- Sampling step ~0.15 m median depth increment (one file ~0.152 m).
+- Pairs 6logs vs 6logs_30dB: same row count and depth range for combined F02/F03/F06 file;
+  30dB variant is noisy copy for comparison.
+- 3logs combined file: GR min negative (-2.8 API) flagged as likely artifact for cleaning.
+- Multiple wells / variants: explore more than one file to see schema and depth coverage differences.
+
+PDF (Tech Report 2) section 5 (summary only):
+- 5.1 Well 861: MOGNO mCT, pore/mineral segmentation, multiscale RP workflow; pyrockphys mentioned.
+- 5.2 Well 1045: ElastoDict stiffness, Thomsen parameters, non-ellipticity; validates trends vs lab.
+
+This file:
+- agent.log at repo root: conversation memory for handoff and user review.
+
+--------------------------------------------------------------------------------
+[2026-04-14] ML strategy - single well / single schema first
+--------------------------------------------------------------------------------
+
+Decided / premised:
+- Starting with ONE dataset (one well code such as F03-4, or one file) and ONE column
+  schema family (7logs OR 6logs OR 3logs) is valid for a first ML pipeline: cleaning,
+  train/val split, target variable, metrics, baseline.
+- Data are NOT from a single well across the whole folder; prefixes F02, F03, F06
+  indicate multiple origins. A model trained on one well may not generalize; treat
+  multi-well claims only after held-out well test or grouped CV.
+- If using stacked files (e.g. F02-1,F03-2,F06-1_*.txt), add well_id (or segment
+  by known depth boundaries) so the model does not assume one stationary process.
+- Next step for generalization: GroupKFold (or similar) by well_id, or reserve
+  entire well(s) for test.
+
+User confirmed: append this decision to agent.log (this entry).
+
+--------------------------------------------------------------------------------
+[2026-04-14] Target choice - porosity (current phase)
+--------------------------------------------------------------------------------
+
+Decided:
+- Primary ML target for now: porosity (Porosity column).
+- 6logs TSV files do not include Porosity; use 7logs or 3logs for this target.
+- Script: ML-prediction/scripts/porosity_baseline.py
+  - HistGradientBoostingRegressor + StandardScaler on features.
+  - Depth-ordered holdout: deepest test_fraction (default 0.2) as test set.
+  - 7logs features: AC, Rho_b, AI, Vp, GR, Vc -> Porosity.
+  - 3logs features: AC, GR -> Porosity; optional --clip-gr-nonnegative.
+
+Example run (default file F03-4_7logs.txt): test MAE ~0.0005, R2 high; interpret
+with care (elastic logs and porosity are strongly coupled in this data).
+
+--------------------------------------------------------------------------------
+[2026-04-14] AI_AGENT_RULES.md + logging policy
+--------------------------------------------------------------------------------
+Pedido:
+- Criar ficheiro .md com regras para o agente seguir; Regra 1: sempre escrever no
+  agent.log o historico da conversa (pedido), raciocinio resumido, caminho ou
+  solucao encontrada.
+
+Raciocinio (resumo):
+- Centralizar obrigacoes num doc versionado; agent.log continua como memoria
+  operacional; Regra 1 formaliza append por solicitacao relevante com template
+  ASCII alinhado ao resto do log.
+
+Solucao / artefactos:
+- Criado: AI_AGENT_RULES.md (raiz do repo) com Regra 1 completa, template de
+  bloco, tabela de referencias; reserva para Regra 2+.
+- Esta entrada em agent.log cumpre a propria Regra 1 para este pedido.
+
+--------------------------------------------------------------------------------
+[2026-04-14] Expansao de AI_AGENT_RULES.md (Regras 2 a 8) e alinhamento de estilo
+--------------------------------------------------------------------------------
+Pedido:
+- Incluir no .md regras sobre: documentos em PT-BR com acentos; evitar vicios de
+  LLM em md/tex e priorizar escrita cientifica; boas praticas de codigo e
+  metodologia; smoke test + uma rodada E2E com dados reais; avaliacao critica dos
+  resultados ao usuario; perguntar antes de implementar apos discussao de ideias;
+  nunca emojis em codigo.
+
+Raciocinio (resumo):
+- Consolidar num unico arquivo numerado; harmonizar Regra 1 com PT-BR no log;
+  substituir secao "reserva" por regras explicitas; executar testes rapidos nos
+  scripts existentes apos mudanca de politica.
+
+Solucao / artefatos:
+- Atualizado: AI_AGENT_RULES.md (Regras 1 a 8, tabela de referencias, PT-BR).
+- Smoke: import do modulo de analise exploratoria (a partir de ML-prediction).
+- E2E: porosity_baseline.py com data/F03-4_7logs.txt (MAE/RMSE/R2 conforme saida).
+- Avaliacao critica: regras em .md nao executam codigo; o import via pacote
+  "scripts" pode ser fragil conforme cwd; porosity_baseline depende de sys.path
+  para exploratory_analysis (ja conhecido).
+
+Observacao para o usuario:
+- Nas proximas implementacoes grandes, sera perguntado se deve seguir (Regra 7),
+  salvo pedido explicito de implementar ja.
+
+--------------------------------------------------------------------------------
+[2026-04-14] Nova regra: chat em português do Brasil
+--------------------------------------------------------------------------------
+Pedido:
+- Acrescentar regra no .md: no chat, conversar em português BR.
+
+Raciocínio (resumo):
+- Inserir como Regra 9 após a Regra 8; delimitar escopo (chat Cursor) e exceção
+  por pedido explícito de outro idioma.
+
+Solução / artefatos:
+- Atualizado: AI_AGENT_RULES.md (secao Regra 9).
+
+--------------------------------------------------------------------------------
+[2026-04-14] Porosidade: gráfico, --save com metadados, ablação sem Vp
+--------------------------------------------------------------------------------
+Pedido:
+- Implementar passos sugeridos: arquivo oficial de treino, salvar modelo, curva
+  prevista vs profundidade; suporte a teste sem Vp e validação em outro poço.
+
+Raciocínio (resumo):
+- Manter default F03-4_7logs como baseline oficial; estender porosity_baseline.py
+  com --plot (caminho opcional), --no-vp, joblib com métricas e caminhos; gráfico
+  porosidade x profundidade (eixo Y invertido) com linha de corte treino/teste.
+
+Solução / artefatos:
+- Alterado: ML-prediction/scripts/porosity_baseline.py
+- Gerados: outputs/porosity_depth_F03-4_7logs.txt.png,
+  outputs/porosity_depth_F03-4_7logs_sem_Vp.png,
+  outputs/porosity_depth_F06-1_7logs.txt.png,
+  outputs/models/porosity_F03-4_7logs.joblib
+- Testes: --help; E2E com --plot e --save; --no-vp; --path data/F06-1_7logs.txt --plot
+- Avaliação crítica: em F03-4, retirar Vp quase não altera MAE/R2 (AI e AC já
+  carregam informação elástica parecida); F06-1 tem R2 de teste menor (0.94),
+  esperado ao mudar de poço.
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+[2026-04-15] Regra 10 e relatório LaTeX (docs + figs)
+--------------------------------------------------------------------------------
+Pedido:
+- Incluir no .md regra para criar .tex em ML-prediction/docs com figuras em figs/,
+  estrutura de relatório científico (teoria, metodologia, premissas, resultados,
+  discussão, etc.).
+
+Raciocínio (resumo):
+- Formalizar como Regra 10 no AI_AGENT_RULES.md; materializar com relatório
+  exemplo sobre porosidade ML, copiando PNGs de outputs para docs/figs com nomes
+  estáveis; compilar com pdflatex para validar.
+
+Solução / artefatos:
+- Atualizado: AI_AGENT_RULES.md (Regra 10, tabela de referências).
+- Criados: ML-prediction/docs/relatorio_porosidade_ml.tex,
+  ML-prediction/docs/figs/*.png (três figuras),
+  ML-prediction/docs/relatorio_porosidade_ml.pdf (após pdflatex).
+- Observação: ao gerar novas figuras em outputs/, copiar de novo para docs/figs/
+  se o relatório deve refletir a versão atual.
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+[2026-04-15] Ablation --no-ai e atualização do relatório LaTeX
+--------------------------------------------------------------------------------
+Pedido:
+- Implementar teste sem AI (impedância), além de sem Vp; incorporar discussão no
+  relatorio_porosidade_ml.tex.
+
+Raciocínio (resumo):
+- Adicionar flag --no-ai no porosity_baseline.py; sufixos automáticos no nome do
+  PNG quando --plot sem caminho, para não sobrescrever ablações; joblib com
+  exclude_ai; copiar figuras para docs/figs; expandir tabela, figuras e discussão
+  no .tex; compilar pdflatex.
+
+Solução / artefatos:
+- Alterado: ML-prediction/scripts/porosity_baseline.py (--no-ai, resolve_plot_path).
+- Novos PNG em outputs: porosity_depth_F03-4_7logs.txt_noAI.png,
+  porosity_depth_F03-4_7logs.txt_noVp_noAI.png.
+- docs/figs: porosity_F03-4_sem_AI.png, porosity_F03-4_sem_Vp_sem_AI.png.
+- Alterado e recompilado: ML-prediction/docs/relatorio_porosidade_ml.tex,
+  relatorio_porosidade_ml.pdf.
+- Resultado numérico F03-4: métricas de teste praticamente iguais com ou sem Vp,
+  com ou sem AI, ou sem ambos (R2 ~0,988); interpretação no relatório: forte
+  multicolinearidade / informação remanescente em AC, rho_b, GR, Vc.
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+[2026-04-15] Estudo multivariado (correlacao, VIF, MI, permutacao, SHAP) + LaTeX
+--------------------------------------------------------------------------------
+Pedido:
+- Implementar estudo de correlacao e ferramentas complementares; salvar
+  resultados; discussao detalhada e coerente no relatorio (modo aditivo), com
+  referencias a secoes e figuras; ajustar narrativa se necessario.
+
+Raciocinio (resumo):
+- Script feature_relationship_study.py com Pearson/Spearman heatmaps, VIF via
+  regressoes auxiliares, mutual_info_regression, permutation_importance no mesmo
+  pipeline do baseline, SHAP TreeExplainer; saidas em outputs/feature_study_*;
+  copia de PNGs para docs/figs; nova Secao multivariada no .tex com labels e
+  ponte para Discussao e Conclusoes; referencia SHAP na bibliografia; labels em
+  secoes preexistentes.
+
+Solucao / artefatos:
+- Novo: ML-prediction/scripts/feature_relationship_study.py
+- Dados: ML-prediction/outputs/feature_study_F03-4_7logs/*.csv, *.png
+- Figuras no relatorio: docs/figs/study_F03-4_*.png (quatro)
+- Atualizado: docs/relatorio_porosidade_ml.tex, relatorio_porosidade_ml.pdf
+- Testes: execucao E2E do script em F03-4; pdflatex duas passagens; --help OK.
+- Nota critica: VIF muito alto reflete quase singularidade linear; Spearman GR/Vc=1
+  sugere ranks identicos ou quase (verificar dados brutos em trabalho futuro).
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+[2026-04-15] Reescrita do relatorio_porosidade_ml.tex conforme AI_AGENT_RULES.md
+--------------------------------------------------------------------------------
+Pedido:
+- Reescrever o .tex com base nas novas regras do .md (PT-BR, anti-LLM, narrativa
+  humana, sem paths/scripts no corpo, formulas uteis, referencias coerentes,
+  conclusoes analiticas, fluxograma).
+
+Raciocinio (resumo):
+- Remover nomes de arquivos .py/.txt/csv e caminhos do texto; unificar voz
+  cientifica impessoal; integrar referencias a figuras/tabelas no discurso;
+  acrescentar equacoes (impedancia, R2, MAE, VIF) e fluxo TikZ; fundir redundancias
+  entre secoes; manter figs existentes em figs/.
+
+Solucao / artefatos:
+- Substituicao completa: ML-prediction/docs/relatorio_porosidade_ml.tex
+- PDF recompilado: relatorio_porosidade_ml.pdf (pdflatex x2)
+- Autor em branco (texto sem atribuicao automatica a repositorio); referencias
+  reduzidas a itens bibliograficos essenciais.
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+[2026-04-15] Correção ortográfica em AI_AGENT_RULES.md (Regra 10)
+--------------------------------------------------------------------------------
+Pedido:
+- Corrigir erros de digitação e redação na Regra 10 e itens adjacentes do .md.
+
+Solução / artefatos:
+- Atualizado: AI_AGENT_RULES.md (itens 3 a 9 da Regra 10: português, proibição de
+  vícios de LLM, referências no texto, fórmulas, caminhos, metodologia; remoção de
+  duplicatas como "pelo o", siglas erradas, "textp", ".xsls", etc.).
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+[2026-04-15] Nova Regra 11 no AI_AGENT_RULES.md (LaTeX)
+--------------------------------------------------------------------------------
+Pedido:
+- Acrescentar regras ao .md: siglas explicadas na primeira ocorrência; fluxogramas
+  explicados no texto; texto autocontido.
+
+Solução / artefatos:
+- Atualizado: AI_AGENT_RULES.md (Regra 11 com três itens: siglas/exemplos Vp, SHAP,
+  GBDT; fluxos explicados no corpo; PDF autocontido sem depender de repositório ou
+  chat).
+
+--------------------------------------------------------------------------------
+[2026-04-15] relatorio_porosidade_ml.tex: narrativa do fluxo e PDF
+--------------------------------------------------------------------------------
+Pedido:
+- Concluir alinhamento ao pedido "faça" (Regra 11): texto coerente com o fluxograma.
+
+Solucao / artefatos:
+- Ajustado paragrafo pos-Figura fig:fluxo: seis blocos (dados, limpeza, particao,
+  padronizacao+GBDT, metricas/ablacao, diagnostico multivariado); removida contagem
+  errada em sete etapas; legenda da tabela de metricas sem redundancia; removida
+  remissao "ver definicao no resumo" na discussao.
+- pdflatex (2 passes) em ML-prediction/docs/: PDF 16 paginas; aviso benigno de float
+  h->ht; referencias resolvidas na segunda passagem.
+
+--------------------------------------------------------------------------------
+[2026-04-15] Revisao Regra 11 (siglas) em relatorio_porosidade_ml.tex
+--------------------------------------------------------------------------------
+Pedido:
+- Rever siglas: primeira ocorrencia com expansao; texto autocontido.
+
+Solucao / artefatos:
+- Resumo: acrescentados MAE e RMSE com expansao e glossario em ingles (como no corpo).
+- Introducao: primeira mencao a impedancia acustica agora inclui (AI), alinhada ao
+  resumo.
+- Metodologia (fluxo): MAE com remissao a eq:mae, alinhado a RMSE e R^2.
+- Referencias: NeurIPS expandido para nome da conferencia com sigla entre parenteses.
+- pdflatex (2 passes): PDF ok.
+
+--------------------------------------------------------------------------------
+[2026-04-15] Script gr_vc_rank_dependence.py (GR vs Vc, postos e empates)
+--------------------------------------------------------------------------------
+Pedido:
+- Seguir o caminho de revisar dependencia GR vs Vc sob postos/empates e correlacao
+  parcial.
+
+Solucao / artefatos:
+- Novo: ML-prediction/scripts/gr_vc_rank_dependence.py (7logs): diagnostico de empates,
+  Pearson/Spearman/Kendall, matriz 3x3 Pearson em postos com rankdata average|min|max,
+  correlacao parcial (residuos OLS) dado profundidade; dado bloco elastico em bruto;
+  postos medios dados profundidade + postos elasticos; jitter Monte Carlo para
+  estabilidade da Spearman.
+- Execucao default em data/F03-4_7logs.txt: outputs/gr_vc_rank_F03-4_7logs/*.csv, PNG.
+- Copia para docs/figs: gr_vc_F03-4_ranks_scatter.png, gr_vc_F03-4_rank_method_sensitivity.png.
+
+--------------------------------------------------------------------------------
+[2026-04-15] relatorio_porosidade_ml.tex: subsecao GR vs Vc (postos e empates)
+--------------------------------------------------------------------------------
+Pedido:
+- Integrar no relatorio tabelas, figuras, discussao e leitura dos resultados.
+
+Solucao / artefatos:
+- Nova subsecao em Resultados: dependencia GR-Vc (empates, Spearman/Kendall, parciais,
+  sensibilidade rank average|min|max, jitter); tab:grvc_ties, tab:grvc_assoc,
+  tab:grvc_rankmethods; fig:grvc_scatter, fig:grvc_methods (figs em docs/figs).
+- Discussao e Conclusoes atualizadas; removido caminho de ficheiro no corpo (Regra 11
+  autocontido).
+- pdflatex (2 passes).
+
+--------------------------------------------------------------------------------
+[2026-04-15] relatorio_porosidade_ml.tex: aprofundamento MI, permutacao, SHAP, contraste
+--------------------------------------------------------------------------------
+Pedido:
+- Aprofundar explicacao e analise onde necessario para revisao do utilizador.
+
+Solucao / artefatos:
+- Premissas: nota sobre escala absoluta da MI (mutual_info_regression) e leitura por
+  ordenacao.
+- Resultados: tabela tab:mi_por (MI arredondada); tabela tab:perm_r2 (queda media e dp,
+  25 repeticoes); texto com interpretacao numerica da permutacao (GR negativo proximo
+  de zero; Vp ~1e-5); leitura detalhada do SHAP (largura das nuvens por preditor).
+- Discussao: sintese referencia tab:mi_por e tab:perm_r2; paragrafo Contraste F03-4
+  vs F06-1 (n, profundidade min/max, media e dp da porosidade; cautela comparacao de
+  R2; mencao a bootstrap como extensao).
+- Conclusoes: remissao as novas tabelas.
+- pdflatex: PDF 19 paginas.
+
+--------------------------------------------------------------------------------
+[2026-04-15] Bootstrap IC no teste (porosity_baseline) + alinhamento no .tex
+--------------------------------------------------------------------------------
+Pedido:
+- Continuar trabalho de IC com bootstrap (execucao anterior interrompida).
+
+Solucao / artefatos:
+- porosity_baseline.py: CSV de bootstrap agora inclui colunas n_boot, seed, test_n.
+- Rodada reproducivel: B=2000, seed=0, para F03-4 e F06-1 (outputs/bootstrap_test_*.csv).
+- relatorio_porosidade_ml.tex: B=2000 na metodologia e na tab:bootstrap_ic; IC
+  atualizados; legenda com n de teste; discussao com limites R2 0,9679 vs 0,9829.
+- pdflatex: PDF 20 paginas.
+
+--------------------------------------------------------------------------------
+[2026-04-15] relatorio_porosidade_ml.tex: conclusoes condicionadas, limites, agenda
+--------------------------------------------------------------------------------
+Pedido:
+- Incorporar melhorias textuais (alcance das conclusoes, fisica vs estatistica, LOO,
+  VIF, permutacao, GR-Vc, MI, AC, conclusoes).
+
+Solucao / artefatos:
+- Resumo e Introducao: conclusoes condicionadas ao recorte/protocolo; ganho marginal
+  Vp/AI; distincao redundancia preditiva vs irrelevancia fisica.
+- Resultados: aviso F03 vs F06 nao e validacao cruzada; texto apos Figura f06; VIF como
+  degenerescencia severa; GR-Vc mais incisivo; MI ordinal antes da tab:mi_por; paragrafo
+  sobre limitacao da permutacao; SHAP/AC sem "dominancia" absoluta.
+- Premissas: limite central intra-coluna explicito.
+- Discussao e fluxo: paragrafo "Limite principal" (robustez interna vs transferencia).
+- Conclusoes: formulacao condicionada; proximos passos (i)(ii)(iii) assertivos.
+- pdflatex: PDF 21 paginas.
+
+--------------------------------------------------------------------------------
+# Modelo para novas entradas (copiar abaixo)
+# --------------------------------------------------------------------------------
+# [AAAA-MM-DD] Titulo curto
+# Pedido:
+# - ...
+# Raciocinio (resumo):
+# - ...
+# Solucao / artefatos:
+# - ...
+# --------------------------------------------------------------------------------

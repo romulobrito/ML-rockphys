@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# LaTeX auxiliary (keep .tex, .pdf, figs/)
+ML-prediction/docs/*.aux
+ML-prediction/docs/*.out
+ML-prediction/docs/*.toc
+ML-prediction/docs/*.lof
+ML-prediction/docs/*.lot
+ML-prediction/docs/*.fls
+ML-prediction/docs/*.fdb_latexmk
+ML-prediction/docs/*.synctex.gz
+ML-prediction/docs/relatorio_porosidade_ml.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.cursor/

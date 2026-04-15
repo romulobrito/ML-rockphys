@@ -1,0 +1,10 @@
+rank_GR,rank_Vc,pearson_on_ranks
+average,average,1.0
+average,min,0.9999913354192488
+average,max,0.9999913381301254
+min,average,0.9999913354192487
+min,min,1.0
+min,max,0.9999653472490633
+max,average,0.9999913381301255
+max,min,0.9999653472490632
+max,max,1.0

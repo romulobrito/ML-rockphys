@@ -1,0 +1,7 @@
+O mais natural como “próximo passo imediato” no mesmo ficheiro de dados e no mesmo tipo de trabalho que já fizeram é a revisão da dependência entre GR e (V_c) sob o prisma de postos idênticos (empates, correlações de postos, eventualmente correlação parcial ou robustez a desempates). Continua no eixo “diagnóstico multivariado / colinearidade”, exige pouco de infraestrutura nova e responde diretamente ao que o relatório já discute (eixo litológico vs. elástico).
+
+A validação por exclusão de poço é o passo mais natural do ponto de vista científico se o objetivo for sustentar generalização entre colunas: mas só faz sentido como prioridade máxima quando há vários poços com o mesmo conjunto de curvas e alvo comparável; caso contrário, vira promessa metodológica sem dados para cumprir.
+
+Os testes com porosidade de referência independente (por exemplo núcleo ou laboratório, não “porosidade de perfil” que entre nas mesmas entradas) são o mais natural como referência de verdade para validação física, mas costumam ser o passo mais lento na prática, porque depende de existir (e alinhar em profundidade) essa referência.
+
+Resumo: para “o que fazer a seguir agora”: GR vs. (V_c) com postos; para “o que deve ser o núcleo da próxima fase se os dados permitirem”: exclusão de poço; para “o que ancora a credibilidade física a médio prazo”: porosidade independente.

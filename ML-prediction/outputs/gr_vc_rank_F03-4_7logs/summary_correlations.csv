@@ -1,0 +1,2 @@
+file,n,pearson_GR_Vc,spearman_GR_Vc,spearman_pvalue,kendall_tau,kendall_pvalue,partial_pearson_GR_Vc_given_Depth,partial_pearson_on_avg_ranks_given_rank_Depth,partial_pearson_GR_Vc_given_elastic_raw,partial_pearson_on_avg_ranks_given_rank_Depth_elastic_ranks,jitter_spearman_mean,jitter_spearman_std,jitter_draws,jitter_scale
+F03-4_7logs.txt,1435,0.9934568045088843,1.0,0.0,0.9999999999999999,0.0,0.9934267181270019,1.0,0.9919815061166541,0.9999999999999999,0.9999916764592666,8.557320226765724e-07,80,4.6500000000000006e-08

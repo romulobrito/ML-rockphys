@@ -1,0 +1,7 @@
+file,/home/romulo/Documentos/lenep-rockphys/ML-prediction/data/F03-4_7logs.txt
+n_rows,1435
+train_n,1148
+test_n,287
+test_fraction,0.2
+features,"['AC', 'Rho_b', 'AI', 'Vp', 'GR', 'Vc']"
+out_dir,/home/romulo/Documentos/lenep-rockphys/ML-prediction/outputs/feature_study_F03-4_7logs
