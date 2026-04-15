@@ -32,8 +32,11 @@ aparente \(\rho_b\), impedância acústica (AI), velocidade da onda de compress�
 P (\(V_p\)), raio gama (GR) e variável associada à fração argilosa (\(V_c\)).
 O ajuste emprega um modelo GBDT (\textit{Gradient Boosting Decision Trees}, conjunto
 de árvores de decisão com reforço por gradiente, aqui na variante baseada em
-histogramas). A avaliação usa partição treino--teste ao longo da profundidade,
-ablações de preditores e diagnóstico multivariado: correlações de Pearson
+histogramas). A avaliação usa partição treino--teste ao longo da profundidade;
+por \textbf{teste profundo}, equivalente neste documento a \textbf{bloco de teste profundo},
+entende-se o conjunto das \(20\%\) observações com maior profundidade após ordenar o
+ficheiro tabular pela coluna \texttt{Depth\_m}, mantendo o treino na fração rasa
+complementar. Registem-se ablações de preditores e diagnóstico multivariado: correlações de Pearson
 e de Spearman e fator de inflação da variância (VIF) no treino; informação mútua
 (MI) entre cada preditor e a porosidade também no treino; importância por permutação do
 coeficiente de determinação (\(R^2\)) no teste, e valores SHAP
@@ -203,9 +206,13 @@ narração: orienta a ordem em que os resultados das Secções~\ref{sec:resultad
 e~\ref{sec:discussao} devem ser lidos.
 
 \subsection{Avaliação e ablação}\label{subsec:ablacao}
+Ao longo do texto, \textbf{teste profundo} e \textbf{bloco de teste profundo} referem-se ao
+mesmo subconjunto de linhas: as observações situadas na cauda mais profunda após
+ordenar o conjunto pela profundidade tabular (\texttt{Depth\_m}), correspondendo no
+protocolo principal a \(20\%\) dos registos (fração parametrizável no código).
 A partição por profundidade reduz o vazamento espacial inerente a sorteios
-independentes em perfil quase contínuo: o teste corresponde ao trecho mais
-profundo (20\% das observações), onde a extrapolação a partir de padrões
+independentes em perfil quase contínuo: o teste corresponde a esse trecho mais
+profundo, onde a extrapolação a partir de padrões
 rasos é mais exigente do que numa partição aleatória i.i.d.\ (independentes
 e identicamente distribuídas entre observações).
 

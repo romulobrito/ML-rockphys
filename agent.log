@@ -474,6 +474,18 @@ Solucao / artefatos:
   aplicada apos convert_portuguese_accents.
 
 --------------------------------------------------------------------------------
+[2026-04-15] LaTeX: definicao explicita de teste profundo / bloco de teste profundo
+--------------------------------------------------------------------------------
+Pedido:
+- Tornar claro no texto o significado de teste profundo e bloco de teste profundo.
+
+Solucao / artefatos:
+- relatorio_porosidade_ml.tex: resumo (20 por cento, ordenacao por Depth_m, treino
+  na fracao rasa; equivalencia dos dois termos); subsecao Avaliacao e ablacao com
+  remissao operacional e nota de parametrizacao no codigo.
+- pdflatex executado com sucesso.
+
+--------------------------------------------------------------------------------
 # Modelo para novas entradas (copiar abaixo)
 # --------------------------------------------------------------------------------
 # [AAAA-MM-DD] Titulo curto
