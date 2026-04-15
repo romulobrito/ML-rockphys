@@ -406,6 +406,24 @@ Solucao / artefatos:
 - Repositorio remoto deixou de estar vazio apos o push.
 
 --------------------------------------------------------------------------------
+[2026-04-15] Planejamento: melhorias metodologicas ML + LaTeX
+--------------------------------------------------------------------------------
+Pedido:
+- Planejamento criterioso e sistematico para implementar melhorias 2.1-2.14
+  (baseline, feature study, GR-Vc, EDA, metadados, orquestrador) e alteracoes
+  necessarias no LaTeX apos regenerar resultados; alinhado a AI_AGENT_RULES.md.
+
+Raciocinio (resumo):
+- Ordenar por dependencias: metadados e pipeline partilhado antes de MI/LOO;
+  prioridade do utilizador (MI treino, inter-poco, sem scaler, multi-corte,
+  monotonia) na Fase B; diagnosticos e portabilidade a seguir; checklist LaTeX
+  e protocolo de regeneracao explicitos.
+
+Solucao / artefatos:
+- ML-prediction/docs/PLANO_MELHORIAS_METODOLOGIA.md (fases A-D, inventario
+  script-saida-figs, riscos, ordem de implementacao, sincronizacao relatorio).
+
+--------------------------------------------------------------------------------
 # Modelo para novas entradas (copiar abaixo)
 # --------------------------------------------------------------------------------
 # [AAAA-MM-DD] Titulo curto
