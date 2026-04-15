@@ -131,9 +131,15 @@ com apoio nas Figuras~\ref{fig:f03vp}--\ref{fig:shap} e na Tabela~\ref{tab:metri
 \section{Metodologia}\label{sec:metodo}
 
 \subsection{Dados e variáveis}
-Utilizou-se um perfil tabular com sete preditores: intervalo de trânsito (AC),
+Utilizou-se um perfil tabular com \textbf{seis} preditores --- intervalo de trânsito (AC),
 densidade aparente \(\rho_b\), impedância acústica (AI), velocidade \(V_p\),
-raio gama (GR), variável associada à argila (\(V_c\)) e porosidade como alvo.
+raio gama (GR) e variável associada à argila (\(V_c\)) --- e \textbf{porosidade} como alvo.
+
+As rotinas de leitura e filtragem usadas na preparação exploratória admitem esquemas
+3logs, 6logs e 7logs; contudo, as inferências centrais deste relatório limitam-se a
+\textbf{recortes tabulares 7logs completos} (em particular F03-4 e F06-1 no texto principal),
+sem pretender que conclusões obtidas nesse esquema se estendam automaticamente a outros
+conjuntos de curvas sem repetir o protocolo.
 
 Neste relatório, \textbf{recorte} designa um \textbf{trecho vertical} da coluna
 perfilada analisado através de um \textbf{conjunto tabular 7logs completo}
@@ -162,6 +168,13 @@ MI no treino, permutação e SHAP no teste profundo). A avaliação por
 permutação insere-se nesse último bloco, pois reutiliza o modelo ajustado e
 as partições fixas.
 
+Para rastreabilidade computacional, o módulo partilhado \texttt{run\_metadata.py}
+é invocado em \texttt{feature\_relationship\_study.py} e em \texttt{gr\_vc\_rank\_dependence.py},
+gravando em cada execução um ficheiro JSON (\texttt{experiment.json}) com carimbo temporal em UTC
+e identificador curto da revisão Git quando o repositório está acessível a partir do diretório
+de trabalho, alinhando números e figuras desses blocos ao estado do código (o baseline de porosidade
+pode registar o mesmo tipo de ficheiro quando ativado por opção de linha de comandos).
+
 \begin{figure}[h]
 \centering
 \begin{tikzpicture}[
@@ -187,8 +200,8 @@ as partições fixas.
 
 Na prática, cada retângulo corresponde a uma etapa documentável. O primeiro
 bloco fixa o universo de variáveis e o alvo; o segundo evita lacunas artificiais
-que distorceriam correlações; o terceiro impõe que o teste seja geograficamente
-contínuo na profundidade, o que aproxima o protocolo de um cenário em que se
+que distorceriam correlações; o terceiro impõe que o teste seja \textbf{contíguo em profundidade}
+(um bloco contínuo ao longo do eixo vertical tabulado), o que aproxima o protocolo de um cenário em que se
 prevê porosidade abaixo de uma profundidade de corte usando apenas informação
 mais rasa. O quarto bloco estima o GBDT diretamente nas features físicas (sem
 escalonamento obrigatório); as predições nesse bloco alimentam as curvas da
@@ -784,6 +797,10 @@ exclusão mútua de poços no treino; (ii) repetição do mesmo protocolo em
 múltiplos recortes e múltiplas colunas, para verificar estabilidade do diagnóstico
 de redundância; (iii) quando possível, substituir ou complementar a porosidade-alvo
 por referência menos acoplada às curvas elásticas usadas como entrada.
+
+As conclusões quantitativas deste documento constituem evidência \textbf{intra-coluna}
+no recorte e no protocolo indicados; não se estendem, por si sós, a outros poços,
+profundidades ou esquemas de curvas sem replicação explícita do mesmo desenho.
 
 \section*{Referências}
 

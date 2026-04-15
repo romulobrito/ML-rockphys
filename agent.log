@@ -511,6 +511,16 @@ Solucao / artefatos:
 - pdflatex OK.
 
 --------------------------------------------------------------------------------
+[2026-04-15] relatorio: revisao factual e escopo (pedido utilizador)
+--------------------------------------------------------------------------------
+- Sec. Dados e variaveis: seis preditores + porosidade alvo (corrige "sete"); paragrafo
+  sobre 3logs/6logs/7logs e nucleo 7logs F03-4/F06-1.
+- Fluxo: frase run_metadata (experiment.json, UTC, git); terceiro bloco: contiguo em
+  profundidade em vez de geograficamente continuo.
+- Conclusoes: frase final seca intra-coluna / sem extensao automatica.
+- pdflatex OK (23 pag).
+
+--------------------------------------------------------------------------------
 [2026-04-15] LaTeX: linguagem neutra LOO; Regra 11 item 4 em AI_AGENT_RULES
 --------------------------------------------------------------------------------
 Pedido:
