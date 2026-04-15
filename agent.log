@@ -389,6 +389,23 @@ Solucao / artefatos:
 - pdflatex: PDF 21 paginas.
 
 --------------------------------------------------------------------------------
+[2026-04-15] Git: repositorio inicial e push para GitHub ML-rockphys
+--------------------------------------------------------------------------------
+Pedido:
+- Inicializar Git no projeto (antes inexistente) e enviar o estado atual para
+  https://github.com/romulobrito/ML-rockphys.git
+
+Raciocinio (resumo):
+- Raiz do trabalho local: lenep-rockphys; remoto publico com nome ML-rockphys.
+- Criar .gitignore para excluir .venv, caches Python e auxiliares LaTeX em docs/;
+  manter .tex, .pdf, figs/, dados e outputs versionados conforme pedido "o que ja temos".
+
+Solucao / artefatos:
+- .gitignore (raiz)
+- git init -b main; commit inicial (81 ficheiros); remote origin HTTPS; push main OK
+- Repositorio remoto deixou de estar vazio apos o push.
+
+--------------------------------------------------------------------------------
 # Modelo para novas entradas (copiar abaixo)
 # --------------------------------------------------------------------------------
 # [AAAA-MM-DD] Titulo curto
