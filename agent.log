@@ -456,6 +456,24 @@ Solucao / artefatos:
 - Teste ponta a ponta: run_report_pipeline.py --skip-eda (sucesso).
 
 --------------------------------------------------------------------------------
+[2026-04-15] LaTeX: correcao de espacos espurios pos-conversao UTF-8
+--------------------------------------------------------------------------------
+Pedido:
+- Corrigir separacoes erradas em palavras (ex.: analí tico, fí sica) causadas pelo
+  fluxo de conversao de acentos LaTeX.
+
+Raciocinio (resumo):
+- Padroes do tipo letra acentuada + espaco + continuacao da palavra; substituicao
+  direta por lista de pares no .tex; Daí com espaco duplo apos replace antigo
+  Da\'\\i~ com espaco no script.
+
+Solucao / artefatos:
+- relatorio_porosidade_ml.tex: merges (crítica, analítico, física, estatística,
+  disponíveis, Daí decorre, etc.); pdflatex OK.
+- latex_portuguese_utf8.py: Da\'\\i~ sem espaco final; funcao fix_spurious_accent_spaces
+  aplicada apos convert_portuguese_accents.
+
+--------------------------------------------------------------------------------
 # Modelo para novas entradas (copiar abaixo)
 # --------------------------------------------------------------------------------
 # [AAAA-MM-DD] Titulo curto

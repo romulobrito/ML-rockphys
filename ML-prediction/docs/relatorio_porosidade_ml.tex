@@ -18,7 +18,7 @@
 \graphicspath{{figs/}}
 
 \title{Regressão supervisionada de porosidade a partir de perfis convencionais:\\
-diagnóstico de colinearidade e leitura crí tica das métricas}
+diagnóstico de colinearidade e leitura crítica das métricas}
 \author{}
 \date{\today}
 
@@ -26,7 +26,7 @@ diagnóstico de colinearidade e leitura crí tica das métricas}
 \maketitle
 
 \begin{abstract}
-Trata-se do registro analí tico de um ensaio de regressão para estimar porosidade
+Trata-se do registro analítico de um ensaio de regressão para estimar porosidade
 a partir de curvas de perfilagem: intervalo de trânsito sônico (AC), densidade
 aparente \(\rho_b\), impedância acústica (AI), velocidade da onda de compressão
 P (\(V_p\)), raio gama (GR) e variável associada à fração argilosa (\(V_c\)).
@@ -46,7 +46,7 @@ tal como exportadas, \(V_p\) e a impedância acústica (AI) não acrescentam
 \textbf{ganho preditivo marginal detectável} quando AC e \(\rho_b\) já entram no
 modelo: o \(R^2\) no teste profundo permanece praticamente inalterado após retirá-los.
 Isto documenta redundância preditiva \textbf{local} nesse protocolo, não
-irrelevância fí sica universal dessas grandezas. Os resultados devem ser lidos como
+irrelevância física universal dessas grandezas. Os resultados devem ser lidos como
 evidência de colinearidade e redundância no recorte analisado, \textbf{não} como
 demonstração de generalização entre poços ou entre contextos geológicos
 distintos.
@@ -55,19 +55,19 @@ distintos.
 \section{Introdução}\label{sec:intro}
 
 A porosidade controla, com mineralogia e fluido, a resposta elástica efetiva da
-rocha. Em colunas perfiladas, relações empí ricas entre porosidade e
+rocha. Em colunas perfiladas, relações empíricas entre porosidade e
 grandezas sônicas ou de densidade são esperadas; o mesmo vale para grandezas
 derivadas da combinação massa--rigidez, como a impedância acústica (AI) e a
-velocidade da onda de compressão P (\(V_p\)). Daí  decorre um risco metodológico: modelos supervisionados
+velocidade da onda de compressão P (\(V_p\)). Daí decorre um risco metodológico: modelos supervisionados
 podem atingir erros baixos no teste sem que isso signifique, por si só, que cada
 preditor contribua com informação independente.
 
-Os achados de ablação não implicam irrelevância fí sica de \(V_p\) ou de AI,
+Os achados de ablação não implicam irrelevância física de \(V_p\) ou de AI,
 mas sim \textbf{ausência de contribuição preditiva marginal detectável} no
 recorte considerado, dado o forte acoplamento dessas grandezas com AC e \(\rho_b\) e a
 qualidade relativa das curvas usadas como entrada.
 
-O objetivo deste texto é documentar, com rigor modesto porém explí cito, um
+O objetivo deste texto é documentar, com rigor modesto porém explícito, um
 baseline de regressão e o diagnóstico que o acompanha. Pretende-se responder,
 com base em números e figuras, se a retirada isolada de \(V_p\) ou da impedância
 acústica (AI) altera o desempenho, e se correlações e o fator de inflação
@@ -86,7 +86,7 @@ Z = \rho\,V .
 Quando \(\rho\) e \(V\) são estimados a partir das mesmas observações que
 alimentam o intervalo de trânsito, a informação trazida por \(Z\) tende a
 sobrepor-se à de \(V\) e à de \(\rho\), em vez de acrescentar graus de liberdade
-estatí sticos novos.
+estatísticos novos.
 
 Para avaliar o ajuste global no teste, utilizou-se o coeficiente de determinação
 \begin{equation}\label{eq:r2}
@@ -185,7 +185,7 @@ as partições fixas.
 Na prática, cada retângulo corresponde a uma etapa documentável. O primeiro
 bloco fixa o universo de variáveis e o alvo; o segundo evita lacunas artificiais
 que distorceriam correlações; o terceiro impõe que o teste seja geograficamente
-contí nuo na profundidade, o que aproxima o protocolo de um cenário em que se
+contínuo na profundidade, o que aproxima o protocolo de um cenário em que se
 prevê porosidade abaixo de uma profundidade de corte usando apenas informação
 mais rasa. O quarto bloco estima o GBDT diretamente nas features físicas (sem
 escalonamento obrigatório); as predições nesse bloco alimentam as curvas da
@@ -194,7 +194,7 @@ profundo e registra variantes sem \(V_p\) ou sem AI. O sexto bloco quantifica
 redundância e sensibilidade: as matrizes de correlação (treino) resumem acoplamento
 linear ou monótono; o VIF mede quasi-colinearidade num sistema linear auxiliar
 ajustado ao treino; a
-MI mede dependência estatí stica (não necessariamente linear) de cada preditor
+MI mede dependência estatística (não necessariamente linear) de cada preditor
 com a porosidade \textbf{no treino}; a permutação mede o quanto o \(R^2\) degrada ao destruir
 informação de um preditor de cada vez; o SHAP decompõe predições em
 contribuições aditivas locais no \textbf{espaço de entrada do modelo} (coincidente com as
@@ -204,23 +204,23 @@ e~\ref{sec:discussao} devem ser lidos.
 
 \subsection{Avaliação e ablação}\label{subsec:ablacao}
 A partição por profundidade reduz o vazamento espacial inerente a sorteios
-independentes em perfil quase contí nuo: o teste corresponde ao trecho mais
+independentes em perfil quase contínuo: o teste corresponde ao trecho mais
 profundo (20\% das observações), onde a extrapolação a partir de padrões
 rasos é mais exigente do que numa partição aleatória i.i.d.\ (independentes
-e identicamente distribuí das entre observações).
+e identicamente distribuídas entre observações).
 
 Foram treinadas variantes do mesmo modelo com subconjuntos de preditores: todas as
-variáveis elásticas disponí veis; sem \(V_p\); sem impedância; sem \(V_p\) e
+variáveis elásticas disponíveis; sem \(V_p\); sem impedância; sem \(V_p\) e
 sem impedância conjuntamente. A comparação direta das métricas no teste
 responde à primeira questão levantada na Secção~\ref{sec:perguntas}.
 
 \subsubsection{Bootstrap pareado no conjunto de teste}\label{subsec:bootstrap_test}
 Para quantificar a incerteza amostral das métricas no bloco de teste profundo,
 mantendo o modelo GBDT já ajustado no treino e as predições \(\hat{y}_i\) fixas,
-aplicou-se \textbf{bootstrap pareado}: sorteiam-se \(n\) í ndices do teste com
+aplicou-se \textbf{bootstrap pareado}: sorteiam-se \(n\) índices do teste com
 reposição, recalculam-se MAE, RMSE e \(R^2\) sobre o par \((y,\hat{y})\)
 reamostrado e repetem-se \(B=2000\) réplicas com semente pseudoaleatória fixa
-(\texttt{numpy}, semente \(0\)). Os quantis empí ricos \(2{,}5\%\) e \(97{,}5\%\)
+(\texttt{numpy}, semente \(0\)). Os quantis empíricos \(2{,}5\%\) e \(97{,}5\%\)
 definem intervalos bilaterais aproximados a \(95\%\). Esta incerteza refere-se à
 variação das métricas sob reamostragem das observações de teste, \textbf{não}
 à variância de retreino do estimador nem à transferência entre poços.
@@ -257,8 +257,8 @@ entre ficheiros, mas com apenas quatro poços não substitui um estudo de campo
 exaustivo: os \(R^2\) por linha variam e um caso (F02-1 como teste) desvia
 substancialmente dos demais. O contraste entre recortes na Figura~\ref{fig:f06}
 compara qualidade de ajuste interno a cada coluna, não transferência aprendida
-numa coluna e testada na outra. Por fim, \(R^2\) alto pode refletir acoplamento fí sico e redundância
-estatí stica, não independência informacional entre preditores. A informação
+numa coluna e testada na outra. Por fim, \(R^2\) alto pode refletir acoplamento físico e redundância
+estatística, não independência informacional entre preditores. A informação
 mútua estimada por \texttt{mutual\_info\_regression} (mesma pilha numérica do
 ensaio) tem \textbf{magnitude absoluta} sensível a hiperparâmetros internos do
 estimador; no texto, a leitura prioritária é a \textbf{ordenação} entre
@@ -318,7 +318,7 @@ F06-1 & $[0{,}00156,\,0{,}00298]$ & $[0{,}00333,\,0{,}00573]$ & $[0{,}9172,\,0{,
 \bottomrule
 \end{tabular}
 \caption{Bootstrap pareado no teste profundo (\(B=2000\), semente \(0\); \(n=287\) no
-F03-4 e \(n=116\) no F06-1). Limites: quantis empí ricos \(2{,}5\%\) e \(97{,}5\%\)
+F03-4 e \(n=116\) no F06-1). Limites: quantis empíricos \(2{,}5\%\) e \(97{,}5\%\)
 das réplicas.}
 \label{tab:bootstrap_ic}
 \end{table}
@@ -375,7 +375,7 @@ poços.
 \centering
 \includegraphics[width=0.85\textwidth]{porosity_F03-4_com_Vp.png}
 \caption{Recorte principal: porosidade observada e prevista com todos os preditores
-elásticos disponí veis.}
+elásticos disponíveis.}
 \label{fig:f03vp}
 \end{figure}
 
@@ -449,10 +449,10 @@ O par GR--\(V_c\) aparece nas matrizes de correlação com associação forte,
 mas a leitura sob \textbf{empates nos postos} (vários pontos com o mesmo valor,
 logo o mesmo posto após \textit{ranking}) e sob \textbf{desempates} extremos
 (\textit{min} e \textit{max} do \texttt{rankdata}) informa se a dependência seria
-artefato numérico ou se permanece quase determiní stica.
+artefato numérico ou se permanece quase determinística.
 
 No recorte principal, sobre o mesmo conjunto 7logs já filtrado por linhas
-completas, calcularam-se estatí sticas de empates, correlações de Pearson,
+completas, calcularam-se estatísticas de empates, correlações de Pearson,
 Spearman e Kendall, correlações parciais via correlação entre resíduos
 de regressões lineares ordinárias (controlo pela profundidade; controlo adicional
 pelo bloco elástico em bruto; variantes em que preditores e profundidade entram
@@ -496,7 +496,7 @@ Spearman + \textit{jitter} & média de 80 sorteios & 0{,}999992 \\
 \end{tabular}
 \caption{Associação GR--\(V_c\) e correlações parciais lineares (resíduos
 OLS; controlo \textbf{linear} apenas, sem equivalência a independência condicional geral).
-Com monotonia empí rica quase perfeita entre GR e \(V_c\), os \(p\)-valores
+Com monotonia empírica quase perfeita entre GR e \(V_c\), os \(p\)-valores
 dos testes de Spearman e de Kendall (hipótese de independência) ficam abaixo do
 que a aritmética de ponto flutuante distingue de zero, aparecendo como \(0\) na
 tabela.}
@@ -517,14 +517,14 @@ posto(GR) $\backslash$ posto(\(V_c\)) & \textit{average} & \textit{min} & \texti
 \end{tabular}
 \caption{Sensibilidade ao desempate: Pearson entre postos definidos com
 \texttt{rankdata(..., method)} (\textit{scipy}); valores fora da diagonal diferem
-só na séxta casa decimal.}
+só na sexta casa decimal.}
 \label{tab:grvc_rankmethods}
 \end{table}
 
 A Tabela~\ref{tab:grvc_ties} mostra que GR e \(V_c\) não são meramente
 correlacionados: compartilham \textbf{exatamente} o mesmo número de valores distintos,
 a mesma fração de linhas em empates e a mesma multiplicidade máxima, o que
-é compatível com \(V_c\) construí do a partir de GR (ou inversamente) com a
+é compatível com \(V_c\) construído a partir de GR (ou inversamente) com a
 mesma grelha de quantização. A Tabela~\ref{tab:grvc_assoc} confirma uma relação
 quase monótona perfeita (Spearman e Kendall unitários) e mantém correlação
 parcial elevada mesmo depois de linearizar profundidade ou o bloco elástico, pelo
@@ -533,7 +533,7 @@ menos no esquema de controlo linear adotado. Uma regressão isotônica crescente
 unitário e erro de reconstrução desprezível na precisão numérica exportada, o que
 quantifica a redundância monótona além das correlações clássicas. \textbf{No recorte principal, GR e \(V_c\)
 não devem ser tratados como eixos independentes de informação:} a evidência
-sugere que um deles é, na prática, quase inteiramente reconstruí vel a partir do
+sugere que um deles é, na prática, quase inteiramente reconstruível a partir do
 outro, de modo que mantê-los simultaneamente pode inflar artificialmente a dimensão
 aparente do espaço de atributos. A Tabela~\ref{tab:grvc_rankmethods} mostra que a
 escolha de desempate (\textit{average}, \textit{min}, \textit{max}) quase não move o
@@ -597,17 +597,17 @@ média de \(R^2\) ao baralhar AC é da ordem de \(1{,}30\), com desvio-padrão d
 \(0{,}06\), enquanto \(\rho_b\) aparece distante, mas ainda positiva (\(\approx 0{,}05\)).
 AI e \(V_p\) têm quedas médias uma ordem de grandeza menores; \(V_p\) fica na casa
 de \(10^{-5}\), compatível com ausência de contribuição marginal detectável
-à escala do ruí do de permutação. GR exibe média ligeiramente negativa
-(\(\approx -9\times 10^{-4}\)), compatível com flutuação estatí stica em torno
+à escala do ruído de permutação. GR exibe média ligeiramente negativa
+(\(\approx -9\times 10^{-4}\)), compatível com flutuação estatística em torno
 de zero quando o preditor é redundante; \(V_c\) registra queda média nula na
-precisão exportada, coerente com o acoplamento quase determiní stico a GR já
+precisão exportada, coerente com o acoplamento quase determinístico a GR já
 documentado.
 
 Em presença de colinearidade forte, a importância por permutação mede
 contribuição \textbf{marginal} condicionada ao restante dos preditores e, por
 construção, tende a \textbf{subestimar} variáveis cuja informação já foi
 absorvida por colunas correlacionadas; quedas quase nulas em AI e \(V_p\) não
-equivalem a ausência fí sica de conteúdo informativo, mas sim a redundância
+equivalem a ausência física de conteúdo informativo, mas sim a redundância
 preditiva face a AC e \(\rho_b\) neste ajuste.
 
 \begin{table}[h]
@@ -643,7 +643,7 @@ redundância frente a AC e densidade. \(\rho_b\) mostra dispersão intermediári
 refletindo o papel secundário mas não nulo visto na permutação. GR e \(V_c\)
 mantém dispersão modesta e parcialmente sobreposta, alinhada à MI baixa e à
 quase colinearidade entre si: o SHAP deve ser lido como explicação \textit{local}
-do ajuste, não como atribuição causal fí sica.
+do ajuste, não como atribuição causal física.
 
 \begin{figure}[p]
 \centering
@@ -681,9 +681,9 @@ A estabilidade das métricas na Tabela~\ref{tab:metricas}, percorrida em paralel
 com as ablações ilustradas nas Figuras~\ref{fig:f03svp}--\ref{fig:f03svpai},
 indica que, \textbf{no recorte principal} e sob o protocolo treino/teste em profundidade,
 \(V_p\) e a impedância não acrescentam \textbf{ganho preditivo marginal detectável}
-quando AC e \(\rho_b\) já estão disponí veis com a qualidade relativa destas
-curvas. Não se trata de desvalorizar medidas fí sicas centrais: o experimento não
-implica irrelevância fí sica de \(V_p\) ou de AI, mas sim ausência de contribuição
+quando AC e \(\rho_b\) já estão disponíveis com a qualidade relativa destas
+curvas. Não se trata de desvalorizar medidas físicas centrais: o experimento não
+implica irrelevância física de \(V_p\) ou de AI, mas sim ausência de contribuição
 preditiva marginal detectável neste contexto, dado o forte acoplamento dessas
 grandezas com AC e densidade.
 
@@ -706,7 +706,7 @@ litológicos independentes no espaço de entrada.
 
 O contraste com a Figura~\ref{fig:f06} e a última linha da Tabela~\ref{tab:metricas}
 mostra que o nível de \(R^2\) não é propriedade universal do modelo: depende
-do recorte. Daí  a cautela ao extrapolar conclusões entre colunas distintas sem
+do recorte. Daí a cautela ao extrapolar conclusões entre colunas distintas sem
 protocolo de exclusão mútua no treino.
 
 \paragraph{Contraste entre recortes F03-4 e F06-1.}
@@ -746,7 +746,7 @@ Figura~\ref{fig:perm}), juntamente com o SHAP (Figura~\ref{fig:shap}), indicam q
 \textbf{no modelo ajustado e neste recorte}, AC emerge como o principal carregador de
 informação preditiva marginal, enquanto a maior parte da variância explicada no
 teste flui por um eixo elástico estreito no qual AI e \(V_p\) ficam preditivamente
-redundantes face a AC e \(\rho_b\), sem afastar a sua relevância fí sica em outros
+redundantes face a AC e \(\rho_b\), sem afastar a sua relevância física em outros
 contextos ou com outras qualidades de aquisição.
 
 O recorte de contraste lembra que a generalização espacial ou entre contextos
