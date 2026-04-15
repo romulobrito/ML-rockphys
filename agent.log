@@ -499,6 +499,18 @@ Solucao / artefatos:
   conjunto tabular em vez de ficheiro; pdflatex OK.
 
 --------------------------------------------------------------------------------
+[2026-04-15] LaTeX: LOO por extenso em PT-BR e nuance do R2 no fold F02-1
+--------------------------------------------------------------------------------
+Pedido:
+- Melhorar portugues do Brasil com acentos; na primeira ocorrencia, LOO por extenso.
+
+Solucao / artefatos:
+- Premissas: definicao LOO (leave-one-well-out) + exclusao sucessiva de um poco;
+  nota de que R2 no F02-1 ainda e muito forte isoladamente.
+- Resultados: subsecao renomeada; paragrafo LOO revisado; tabela e conclusoes alinhadas.
+- pdflatex OK.
+
+--------------------------------------------------------------------------------
 # Modelo para novas entradas (copiar abaixo)
 # --------------------------------------------------------------------------------
 # [AAAA-MM-DD] Titulo curto

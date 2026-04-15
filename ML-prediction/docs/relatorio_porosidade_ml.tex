@@ -263,11 +263,14 @@ alinhado aos VIF extremos.
 
 As curvas e a porosidade tratam-se como co-registradas na profundidade informada,
 sem corrigir deslocamentos instrumentais. O protocolo principal permanece, por
-construção, \textbf{intra-coluna} (corte vertical num único conjunto tabular). O ensaio
-\textit{leave-one-well-out} da Tabela~\ref{tab:loo_well} aproxima exclusão mútua
+construção, \textbf{intra-coluna} (corte vertical num único conjunto tabular). A validação
+\textbf{LOO} (\textit{leave-one-well-out}, ou seja, \emph{exclusão sucessiva de um poço por vez}:
+em cada rodada treina-se com a união de todos os \emph{outros} recortes tabulares e avalia-se
+somente no poço que ficou de fora do treino), apresentada na Tabela~\ref{tab:loo_well}, aproxima a exclusão mútua
 entre conjuntos tabulares distintos, mas com apenas quatro poços não substitui um estudo de campo
 exaustivo: os \(R^2\) por linha variam e um caso (F02-1 como teste) desvia
-substancialmente dos demais. O contraste entre recortes na Figura~\ref{fig:f06}
+substancialmente dos demais, \textbf{sem deixar de indicar ajuste ainda muito forte} naquele poço
+isoladamente. O contraste entre recortes na Figura~\ref{fig:f06}
 compara qualidade de ajuste interno a cada coluna, não transferência aprendida
 numa coluna e testada na outra. Por fim, \(R^2\) alto pode refletir acoplamento físico e redundância
 estatística, não independência informacional entre preditores. A informação
@@ -344,14 +347,17 @@ Com profundidade máxima das árvores \(\in \{4,6,8\}\) e demais hiperparâmetro
 mesmo corte de \(20\%\) permanece na casa de \(0{,}988\), sugerindo que a leitura de
 redundância marginal não está ancorada num único valor de profundidade de árvore.
 
-\subsubsection{Exclusão mútua entre poços (\textit{leave-one-well-out})}
-Para aproximar a crítica de generalização \textbf{entre} colunas, treinou-se o mesmo tipo
-de GBDT na união de três recortes tabulares 7logs e testou-se no quarto, percorrendo os quatro
+\subsubsection{Exclusão sucessiva de um poço (LOO, \textit{leave-one-well-out})}
+Para aproximar a crítica de generalização \textbf{entre} colunas, aplicou-se a validação
+\textbf{LOO} já definida nas premissas: em cada passo, treina-se o mesmo tipo de GBDT na união
+de três recortes tabulares 7logs e testa-se no quarto, percorrendo os quatro
 poços disponíveis (F02-1, F03-2, F03-4, F06-1). O \(R^2\) no poço retido varia
-substancialmente (Tabela~\ref{tab:loo_well}): permanece elevado quando o teste é
-F03-2, F03-4 ou F06-1, mas cai para cerca de \(0{,}96\) quando o teste é F02-1, o que
-reforça que ``\(R^2\) alto'' não é garantia automática de transferência entre contextos
-litológicos e instrumentais distintos.
+de forma notável (Tabela~\ref{tab:loo_well}): permanece muito alto quando o teste é
+F03-2, F03-4 ou F06-1, enquanto, quando o teste é F02-1, o \(R^2\) situa-se perto de \(0{,}96\),
+ainda indicador de \textbf{excelente} ajuste em termos absolutos, porém \textbf{inferior} aos
+outros três casos neste protocolo. Isto reforça que ``\(R^2\) alto'' não traduz, por si só,
+garantia de \textbf{mesma} qualidade de transferência entre contextos litológicos e instrumentais
+distintos, nem impede variação entre poços.
 
 \begin{table}[h]
 \centering
@@ -366,7 +372,8 @@ F03-4 & 2605 & 1435 & 0{,}00011 & 0{,}999 \\
 F06-1 & 3464 & 576 & 0{,}00013 & 1{,}000$^\ast$ \\
 \bottomrule
 \end{tabular}
-\caption{LOO entre quatro recortes tabulares 7logs: treino na união dos outros três, teste no poço da linha.
+\caption{Validação LOO entre quatro recortes tabulares 7logs (treino na união dos outros três,
+teste exclusivo no poço da linha).
 $^\ast$Arredondamento a três casas; valor pontual \(0{,}999845\).}
 \label{tab:loo_well}
 \end{table}
@@ -772,7 +779,7 @@ preditores no recorte principal.
 
 O ensaio caracteriza robustez interna ao recorte e \textbf{não} transferência entre
 poços; esta última permanece etapa futura necessária. Como próximos passos,
-\textbf{recomenda-se}: (i) validação \textit{leave-one-well-out} ou equivalente com
+\textbf{recomenda-se}: (i) validação LOO (\textit{leave-one-well-out}) ou equivalente com
 exclusão mútua de poços no treino; (ii) repetição do mesmo protocolo em
 múltiplos recortes e múltiplas colunas, para verificar estabilidade do diagnóstico
 de redundância; (iii) quando possível, substituir ou complementar a porosidade-alvo
