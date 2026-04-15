@@ -597,6 +597,32 @@ Solucao / artefatos:
 - agent.log: correção do bloco vazio + esta entrada.
 
 --------------------------------------------------------------------------------
+[2026-04-16] relatorio: justificativa GBDT (sequencial, histogramas, sem z-score)
+--------------------------------------------------------------------------------
+Pedido:
+- Deixar claro no LaTeX por que usar GBDT, variante em histogramas e sem padronização.
+
+Solucao / artefatos:
+- relatorio_porosidade_ml.tex: subsubsecao sob Fluxo de processamento (GBDT sequencial,
+  dados tabulares, nao linearidade/interacoes, bins por eficiencia, invariancia a
+  escala linear por coluna; opcao de escalonamento para modelos lineares).
+- Ajustes PT-BR pontuais: registada->registrada, partilhado->compartilhado.
+- pdflatex OK.
+
+--------------------------------------------------------------------------------
+[2026-04-16] Regra 10 item 8 + LaTeX: etapas sem citar .py; apoio ao fluxograma
+--------------------------------------------------------------------------------
+Pedido:
+- Regra para nao citar arquivos .py no texto do relatorio; destacar ideia/objetivo;
+  apoiar no fluxograma se existir.
+
+Solucao / artefatos:
+- AI_AGENT_RULES.md: item 8 da Regra 10 expandido (objetivo, fluxograma, sem .py no
+  corpo); Regra 11 item 6 alinhado (JSON sem nome de ficheiro de codigo).
+- relatorio_porosidade_ml.tex: paragrafo de rastreabilidade sem \\texttt{.py}; remete
+  a Figura do fluxo; posicionado apos narrativa do fluxograma; registos->registros.
+
+--------------------------------------------------------------------------------
 # Modelo para novas entradas (copiar abaixo)
 # --------------------------------------------------------------------------------
 # [AAAA-MM-DD] Titulo curto

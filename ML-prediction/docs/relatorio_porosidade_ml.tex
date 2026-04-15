@@ -41,7 +41,7 @@ de árvores de decisão com reforço por gradiente, aqui na variante baseada em
 histogramas). A avaliação usa partição treino--teste ao longo da profundidade;
 por \textbf{teste profundo}, equivalente neste documento a \textbf{bloco de teste profundo},
 entende-se o conjunto das \(20\%\) observações com maior profundidade após ordenar o
-conjunto tabular pela profundidade mecânica registada ao longo da coluna, mantendo o treino na fração rasa
+conjunto tabular pela profundidade mecânica registrada ao longo da coluna, mantendo o treino na fração rasa
 complementar. Descrevem-se ainda ablações de preditores e o diagnóstico multivariado: correlações de Pearson
 e de Spearman e fator de inflação da variância (VIF) no treino; informação mútua
 (MI) entre cada preditor e a porosidade também no treino; importância por permutação do
@@ -164,6 +164,40 @@ por si só, o mesmo poço em duas profundidades nem litologia dominante idêntic
 etiquetas distintas.
 
 \subsection{Fluxo de processamento}
+
+\subsubsection{Estimador: GBDT em histogramas}\label{subsec:gbdt_just}
+O \textit{Gradient Boosting} sobre árvores de decisão (GBDT) constrói um conjunto de
+árvores de forma \textbf{sequencial}: a cada etapa acrescenta-se uma árvore que
+aproxima o gradiente da função de perda em relação à predição acumulada, de modo
+que novas árvores corrigem principalmente os resíduos ainda mal explicados pelo
+conjunto anterior, em vez de forçar uma única árvore muito profunda. A predição
+final soma contribuições aditivas das árvores.
+
+Neste ensaio, o GBDT é usado como \textbf{regressor de referência} sobre dados
+\textbf{tabulares} (linhas = profundidades, colunas = curvas e alvo), contexto em
+que boosting com árvores costuma ser competitivo sem exigir especificação explícita
+de termos não lineares ou de interações: partições recursivas capturam relações não
+lineares e acoplamentos entre preditores sem suposição de linearidade forte entre
+porosidade e logs, adequado quando se admite que a relação físico-estatística pode
+desviar-se de um modelo linear simples.
+
+A implementação adotada segue a variante \textbf{baseada em histogramas}
+(\textit{histogram-based}): valores contínuos das entradas são discretizados em
+intervalos (\textit{bins}) durante o treino, reduzindo o custo de procura de cortes
+em colunas com muitas observações e tendendo a estabilizar o ajuste em bases
+relativamente grandes frente a métodos que avaliam cada ponto de corte contínuo
+isoladamente.
+
+Por fim, \textbf{não} se impõe padronização \textit{z-score} obrigatória nas features
+antes do GBDT: partições por limiar em árvores são invariantes a transformações
+monótonas afim por coluna (mudança de unidade ou escala linear não altera a ordem
+dos valores), ao contrário de regressões lineares ou de métodos guiados por
+distâncias, nos quais a escala importa diretamente. Mantém-se apenas, como
+\textbf{variante opcional}, o escalonamento das entradas para comparações com
+modelos lineares auxiliares, preservando coerência com a natureza do estimador
+principal e evitando etapas de pré-processamento desnecessárias para o bloco central
+em árvores.
+
 O procedimento computacional segue a cadeia ilustrada na Figura~\ref{fig:fluxo}, lida
 de cima para baixo: primeiro consolidam-se tabela de preditores e alvo; em seguida
 remove-se linhas incompletas; depois separa-se o trecho mais profundo para teste,
@@ -177,13 +211,6 @@ por fim, executa-se o bloco de diagnóstico multivariado (correlações e VIF no
 MI no treino, permutação e SHAP no teste profundo). A avaliação por
 permutação insere-se nesse último bloco, pois reutiliza o modelo ajustado e
 as partições fixas.
-
-Para rastreabilidade computacional, o módulo partilhado \texttt{run\_metadata.py}
-é invocado em \texttt{feature\_relationship\_study.py} e em \texttt{gr\_vc\_rank\_dependence.py},
-gravando em cada execução um registo auxiliar em JSON (\texttt{experiment.json}) com carimbo temporal em UTC
-e identificador curto da revisão Git quando o repositório está acessível a partir do diretório
-de trabalho, alinhando números e figuras desses blocos ao estado do código (o baseline de porosidade
-pode registar o mesmo tipo de saída JSON quando ativado por opção de linha de comandos).
 
 \begin{figure}[h]
 \centering
@@ -228,11 +255,20 @@ features originais neste protocolo). Assim, a Figura~\ref{fig:fluxo} não dispen
 narração: orienta a ordem em que os resultados das Secções~\ref{sec:resultados}
 e~\ref{sec:discussao} devem ser lidos.
 
+Para \textbf{rastreabilidade} das execuções numéricas, alinhada à ordem da
+Figura~\ref{fig:fluxo}, as etapas finais de diagnóstico multivariado (último bloco do
+fluxograma) podem deixar, quando a infraestrutura o permitir, um \textbf{registro
+auxiliar em formato JSON} com carimbo temporal em UTC e identificador curto da
+revisão Git do código utilizado, de forma a associar tabelas e figuras ao estado do
+software na data da rodagem. O mesmo tipo de registro pode ser produzido de forma
+\textbf{opcional} após o ajuste do GBDT (bloco central da mesma figura), quando a
+gravação desse metadado estiver habilitada na execução.
+
 \subsection{Avaliação e ablação}\label{subsec:ablacao}
 Ao longo do texto, \textbf{teste profundo} e \textbf{bloco de teste profundo} referem-se ao
 mesmo subconjunto de linhas: as observações situadas na cauda mais profunda após
 ordenar o conjunto pela profundidade mecânica tabulada, correspondendo,
-no estudo principal, a \(20\%\) dos registos mais profundos (em sensibilidades
+no estudo principal, a \(20\%\) dos registros mais profundos (em sensibilidades
 posteriormente reportadas utilizaram-se também \(15\%\) e \(25\%\)).
 A partição por profundidade reduz o vazamento espacial inerente a sorteios
 independentes em perfil quase contínuo: o teste corresponde a esse trecho mais
