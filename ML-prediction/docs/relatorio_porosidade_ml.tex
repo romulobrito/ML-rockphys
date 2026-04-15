@@ -49,10 +49,12 @@ tal como apresentadas nas figuras deste relatório, \(V_p\) e a impedância acú
 \textbf{ganho preditivo marginal detectável} quando AC e \(\rho_b\) já entram no
 modelo: o \(R^2\) no teste profundo permanece praticamente inalterado após retirá-los.
 Isto documenta redundância preditiva \textbf{local} nesse protocolo, não
-irrelevância física universal dessas grandezas. Os resultados devem ser lidos como
-evidência de colinearidade e redundância no recorte analisado, \textbf{não} como
-demonstração de generalização entre poços ou entre contextos geológicos
-distintos.
+irrelevância física universal dessas grandezas. A leitura das ablações e do diagnóstico
+multivariado no recorte principal permanece ancorada a esse protocolo intra-coluna.
+Complementarmente, uma validação LOO entre quatro conjuntos de dados 7logs (tabela no texto)
+indica encaixe elevado em cada poço retido, com heterogeneidade moderada entre colunas;
+isso não substitui estudos alargados nem afirma independência geológica plena entre
+esses quatro poços.
 \end{abstract}
 
 \section{Introdução}\label{sec:intro}
@@ -76,8 +78,9 @@ com base em números e figuras, se a retirada isolada de \(V_p\) ou da impedânc
 acústica (AI) altera o desempenho, e se correlações e o fator de inflação
 da variância (VIF) sustentam a
 leitura de redundância entre preditores. Inclui-se ainda um contraste entre dois
-recortes verticais distintos, para lembrar que a generalização entre contextos
-não se infere apenas de \(R^2\) alto num único intervalo.
+recortes verticais distintos e uma validação LOO entre quatro conjuntos de dados 7logs, para
+lembrar que a leitura entre contextos não se resume a \(R^2\) elevado num único intervalo
+nem implica transferência homogénea entre colunas.
 
 \section{Quadro teórico sucinto}\label{sec:fund}
 
@@ -170,10 +173,10 @@ as partições fixas.
 
 Para rastreabilidade computacional, o módulo partilhado \texttt{run\_metadata.py}
 é invocado em \texttt{feature\_relationship\_study.py} e em \texttt{gr\_vc\_rank\_dependence.py},
-gravando em cada execução um ficheiro JSON (\texttt{experiment.json}) com carimbo temporal em UTC
+gravando em cada execução um registo auxiliar em JSON (\texttt{experiment.json}) com carimbo temporal em UTC
 e identificador curto da revisão Git quando o repositório está acessível a partir do diretório
 de trabalho, alinhando números e figuras desses blocos ao estado do código (o baseline de porosidade
-pode registar o mesmo tipo de ficheiro quando ativado por opção de linha de comandos).
+pode registar o mesmo tipo de saída JSON quando ativado por opção de linha de comandos).
 
 \begin{figure}[h]
 \centering
@@ -280,10 +283,13 @@ construção, \textbf{intra-coluna} (corte vertical num único conjunto tabular)
 \textbf{LOO} (\textit{leave-one-well-out}, ou seja, \emph{exclusão sucessiva de um poço por vez}:
 em cada rodada treina-se com a união de todos os \emph{outros} recortes tabulares e avalia-se
 somente no poço que ficou de fora do treino), apresentada na Tabela~\ref{tab:loo_well}, aproxima a exclusão mútua
-entre conjuntos tabulares distintos, mas com apenas quatro poços não substitui um estudo de campo
-exaustivo: os \(R^2\) por linha oscilam num intervalo estreito (todos acima de \(0{,}96\));
-o caso em que o poço F02-1 fica reservado para teste apresenta o menor valor desse conjunto,
-sem deixar, contudo, de corresponder a ajuste elevado em termos absolutos. O contraste entre recortes na Figura~\ref{fig:f06}
+entre conjuntos tabulares distintos nestes quatro conjuntos de dados 7logs. Os \(R^2\) no poço retido
+situam-se entre \(0{,}960\) e cerca de \(0{,}9998\) (MAE baixo em todas as linhas), o que indica
+transferência entre poços globalmente favorável neste conjunto, sem uniformidade estrita:
+quando o teste é F02-1, o \(R^2\) é o mais baixo da tabela e o MAE o mais alto, enquanto as outras
+três exclusões concentram-se ainda mais perto do teto numérico. Com apenas quatro recortes,
+o LOO não substitui um estudo de campo exaustivo nem documenta grau de independência física
+entre poços, semelhança instrumental ou ausência de acoplamento alvo--preditores. O contraste entre recortes na Figura~\ref{fig:f06}
 compara qualidade de ajuste interno a cada coluna, não transferência aprendida
 numa coluna e testada na outra. Por fim, \(R^2\) alto pode refletir acoplamento físico e redundância
 estatística, não independência informacional entre preditores. A informação
@@ -308,8 +314,9 @@ sobre dependência do intervalo litológico e da qualidade relativa das curvas.
 A comparação entre a primeira linha da tabela (F03-4, baseline completa) e a
 última (F06-1, baseline completa) constitui apenas \textbf{contraste qualitativo} entre
 duas séries tabulares sob o \textbf{mesmo} protocolo interno (treino no trecho raso,
-teste no bloco profundo de 20\%); \textbf{não} é validação cruzada entre
-poços nem transferência de um modelo aprendido num poço para outro.
+teste no bloco profundo de 20\%); \textbf{não} corresponde ao protocolo LOO da
+Tabela~\ref{tab:loo_well}, em que um único modelo treina na união de três colunas e
+avalia exclusivamente na quarta.
 
 \begin{table}[h]
 \centering
@@ -365,12 +372,14 @@ Para aproximar a crítica de generalização \textbf{entre} colunas, aplicou-se 
 \textbf{LOO} já definida nas premissas: em cada passo, treina-se o mesmo tipo de GBDT na união
 de três recortes tabulares 7logs e testa-se no quarto, percorrendo os quatro
 poços disponíveis (F02-1, F03-2, F03-4, F06-1). Na Tabela~\ref{tab:loo_well}, o \(R^2\) no
-poço retido situa-se entre \(0{,}960\) e \(0{,}999\): os quatro valores são elevados e
-diferem sobretudo na terceira casa decimal, com o mínimo quando o teste é F02-1. A
-dispersão é modesta em escala absoluta, mas suficiente para mostrar que o coeficiente
-\textbf{não} é constante entre poços neste protocolo. Isto reforça que ``\(R^2\) alto'' não
-equivale, por si só, a \textbf{mesma} qualidade de transferência entre contextos litológicos
-e instrumentais distintos.
+poço retido situa-se entre \(0{,}960\) e \(0{,}999\) (valor pontual máximo \(0{,}999845\))
+e o MAE permanece baixo em todas as linhas: o quadro indica generalização entre poços
+globalmente forte nestes quatro conjuntos de dados. A variação entre linhas ---
+notadamente o contraste de F02-1 (\(R^2=0{,}960\), MAE \(=0{,}00311\)) com F03-2, F03-4 e
+F06-1 --- mostra que \(R^2\) elevado \textbf{não} implica transferência estritamente homogénea
+entre contextos distintos; qualifica um resultado globalmente favorável, sem sugerir
+instabilidade grave nem substituir validação em conjuntos mais vastos ou em condições
+de aquisição claramente independentes.
 
 \begin{table}[h]
 \centering
@@ -761,11 +770,14 @@ reamostragem. O aviso metodológico permanece: estes intervalos não substituem
 validação por exclusão de poço.
 
 \paragraph{Limite principal.}
-O ensaio caracteriza \textbf{robustez interna} ao recorte e ao protocolo adotado; não
-caracteriza \textbf{transferência entre poços} nem domínio geológico alargado.
-O teste profundo, por mais exigente que seja face a um sorteio i.i.d., permanece
-intra-coluna: esta limitação deve pesar em qualquer extrapolação além do
-material tabular analisado.
+O protocolo núcleo (partição raso/profundo por coluna) caracteriza \textbf{robustez interna}
+ao recorte e ao modelo ajustado naquela coluna. A Tabela~\ref{tab:loo_well} acrescenta,
+sobre quatro recortes 7logs, evidência de encaixe elevado no poço retido em cada exclusão,
+compatível com transferência favorável nesse conjunto finito, porém \textbf{não} uniforme
+entre linhas nem substituto de domínio geológico alargado. O teste profundo permanece,
+por construção, intra-coluna; a leitura das ablações e do diagnóstico multivariado nas
+figuras centrais deve distinguir-se da extrapolação além do material tabular analisado
+ou além dos quatro conjuntos de dados percorridos no LOO.
 
 \section{Conclusões}\label{sec:conclusoes}
 
@@ -790,17 +802,20 @@ A revisão de dependência entre GR e \(V_c\) sob postos e empates
 (Secção~\ref{subsec:grvc}) confirma quase redundância formal entre esses
 preditores no recorte principal.
 
-O ensaio caracteriza robustez interna ao recorte e \textbf{não} transferência entre
-poços; esta última permanece etapa futura necessária. Como próximos passos,
-\textbf{recomenda-se}: (i) validação LOO (\textit{leave-one-well-out}) ou equivalente com
-exclusão mútua de poços no treino; (ii) repetição do mesmo protocolo em
-múltiplos recortes e múltiplas colunas, para verificar estabilidade do diagnóstico
-de redundância; (iii) quando possível, substituir ou complementar a porosidade-alvo
-por referência menos acoplada às curvas elásticas usadas como entrada.
+O protocolo principal no recorte F03-4 caracteriza robustez interna à coluna; a
+Tabela~\ref{tab:loo_well} acrescenta validação LOO entre quatro conjuntos de dados, com encaixe
+elevado em cada poço retido e heterogeneidade moderada (F02-1 mais exigente que os
+demais). Como próximos passos, \textbf{recomenda-se}: (i) alargar validação entre poços
+para mais colunas ou bases independentes quando dados estiverem disponíveis, mantendo
+exclusão mútua no treino; (ii) repetir o mesmo protocolo de diagnóstico em múltiplos
+recortes, para verificar estabilidade da leitura de redundância; (iii) quando possível,
+substituir ou complementar a porosidade-alvo por referência menos acoplada às curvas
+elásticas usadas como entrada.
 
-As conclusões quantitativas deste documento constituem evidência \textbf{intra-coluna}
-no recorte e no protocolo indicados; não se estendem, por si sós, a outros poços,
-profundidades ou esquemas de curvas sem replicação explícita do mesmo desenho.
+As conclusões sobre ablações, VIF, MI e SHAP no recorte principal constituem evidência
+\textbf{intra-coluna} naquele protocolo em profundidade. A síntese LOO aplica-se ao
+quatro conjuntos de dados indicados e não se estende, sem novo desenho, a outros poços,
+profundidades ou esquemas de curvas.
 
 \section*{Referências}
 

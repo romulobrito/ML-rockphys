@@ -511,6 +511,23 @@ Solucao / artefatos:
 - pdflatex OK.
 
 --------------------------------------------------------------------------------
+[2026-04-15] relatorio: evitar palavra "ficheiro" para dados; JSON como registo/saida
+--------------------------------------------------------------------------------
+- relatorio_porosidade_ml.tex: LOO e escopo usam "conjunto(s) de dados"; rastreio JSON
+  como "registo auxiliar em JSON" / "saida JSON" (nao confundir com tabela de poços).
+
+--------------------------------------------------------------------------------
+[2026-04-15] relatorio: tom LOO equilibrado (feedback utilizador)
+--------------------------------------------------------------------------------
+- Premissas LOO: transferencia favoravel no conjunto de 4; F02-1 mais exigente;
+  limites (4 ficheiros, independencia nao provada).
+- Resultados LOO: qualifica resultado forte; R2 elevado sem homogeneidade estrita;
+  sem subestimar LOO.
+- Tabela metricas: distingue contraste F03/F06 do protocolo LOO.
+- Discussao limite + conclusoes + resumo + intro: alinhados a LOO ja executado;
+  proximos passos (i) ampliar poços, nao repetir LOO como pendente.
+
+--------------------------------------------------------------------------------
 [2026-04-15] relatorio: revisao factual e escopo (pedido utilizador)
 --------------------------------------------------------------------------------
 - Sec. Dados e variaveis: seis preditores + porosidade alvo (corrige "sete"); paragrafo
