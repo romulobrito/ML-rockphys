@@ -17,6 +17,12 @@
 
 \graphicspath{{figs/}}
 
+% Nomenclatura fixa (definida na Metodologia): F03-4 = referencia; F06-1 = validacao entre colunas.
+\newcommand{\dadosref}{conjunto de dados de referência (F03-4)}
+\newcommand{\dadosval}{conjunto de dados de validação (F06-1)}
+\newcommand{\Dadosref}{Conjunto de dados de referência (F03-4)}
+\newcommand{\Dadosval}{Conjunto de dados de validação (F06-1)}
+
 \title{Regressão supervisionada de porosidade a partir de perfis convencionais:\\
 diagnóstico de colinearidade e leitura crítica das métricas}
 \author{}
@@ -43,14 +49,13 @@ coeficiente de determinação (\(R^2\)) no teste, e valores SHAP
 (\textit{SHapley Additive exPlanations}, decomposição aditiva do efeito de cada
 preditor com base em Shapley). Complementam o quadro, no conjunto de teste profundo,
 o erro absoluto médio (MAE, do inglês \textit{mean absolute error}) e a raiz do
-erro quadrático médio (RMSE, \textit{root mean squared error}). No \textbf{recorte
-principal}, sob partição treino--teste ao longo da profundidade e com as curvas
+erro quadrático médio (RMSE, \textit{root mean squared error}). No \textbf{\dadosref}, sob partição treino--teste ao longo da profundidade e com as curvas
 tal como apresentadas nas figuras deste relatório, \(V_p\) e a impedância acústica (AI) não acrescentam
 \textbf{ganho preditivo marginal detectável} quando AC e \(\rho_b\) já entram no
 modelo: o \(R^2\) no teste profundo permanece praticamente inalterado após retirá-los.
 Isto documenta redundância preditiva \textbf{local} nesse protocolo, não
 irrelevância física universal dessas grandezas. A leitura das ablações e do diagnóstico
-multivariado no recorte principal permanece ancorada a esse protocolo intra-coluna.
+multivariado no \dadosref\ permanece ancorada a esse protocolo intra-coluna.
 Complementarmente, uma validação LOO entre quatro conjuntos de dados 7logs (tabela no texto)
 indica encaixe elevado em cada poço retido, com heterogeneidade moderada entre colunas;
 isso não substitui estudos alargados nem afirma independência geológica plena entre
@@ -69,7 +74,7 @@ preditor contribua com informação independente.
 
 Os achados de ablação não implicam irrelevância física de \(V_p\) ou de AI,
 mas sim \textbf{ausência de contribuição preditiva marginal detectável} no
-recorte considerado, dado o forte acoplamento dessas grandezas com AC e \(\rho_b\) e a
+\dadosref\ considerado, dado o forte acoplamento dessas grandezas com AC e \(\rho_b\) e a
 qualidade relativa das curvas usadas como entrada.
 
 O objetivo deste texto é documentar, com rigor modesto porém explícito, um
@@ -77,10 +82,10 @@ baseline de regressão e o diagnóstico que o acompanha. Pretende-se responder,
 com base em números e figuras, se a retirada isolada de \(V_p\) ou da impedância
 acústica (AI) altera o desempenho, e se correlações e o fator de inflação
 da variância (VIF) sustentam a
-leitura de redundância entre preditores. Inclui-se ainda um contraste entre dois
-recortes verticais distintos e uma validação LOO entre quatro conjuntos de dados 7logs, para
+leitura de redundância entre preditores. Inclui-se ainda um contraste entre o
+\dadosref\ e o \dadosval\ e uma validação LOO entre quatro conjuntos de dados 7logs, para
 lembrar que a leitura entre contextos não se resume a \(R^2\) elevado num único intervalo
-nem implica transferência homogénea entre colunas.
+nem implica transferência homogênea entre colunas.
 
 \section{Quadro teórico sucinto}\label{sec:fund}
 
@@ -127,7 +132,7 @@ com apoio nas Figuras~\ref{fig:f03vp}--\ref{fig:shap} e na Tabela~\ref{tab:metri
   \item A importância por permutação do \(R^2\) e o resumo SHAP
   (\textit{SHapley Additive exPlanations}) apontam para um preditor dominante entre os
   elásticos?
-  \item O mesmo protocolo, aplicado a um segundo recorte vertical, produz \(R^2\)
+  \item O mesmo protocolo, aplicado ao \dadosval, produz \(R^2\)
   sensivelmente diferente?
 \end{enumerate}
 
@@ -140,21 +145,23 @@ raio gama (GR) e variável associada à argila (\(V_c\)) --- e \textbf{porosidad
 
 As rotinas de leitura e filtragem usadas na preparação exploratória admitem esquemas
 3logs, 6logs e 7logs; contudo, as inferências centrais deste relatório limitam-se a
-\textbf{recortes tabulares 7logs completos} (em particular F03-4 e F06-1 no texto principal),
-sem pretender que conclusões obtidas nesse esquema se estendam automaticamente a outros
-conjuntos de curvas sem repetir o protocolo.
+\textbf{recortes tabulares 7logs completos} (em particular os dois conjuntos fixados
+abaixo), sem pretender que conclusões obtidas nesse esquema se estendam automaticamente
+a outros conjuntos de curvas sem repetir o protocolo.
 
 Neste relatório, \textbf{recorte} designa um \textbf{trecho vertical} da coluna
 perfilada analisado através de um \textbf{conjunto tabular 7logs completo}
 (preditor + alvo), com amostragem regular ao longo da profundidade e
-\textbf{identificador de amostra} próprio (etiqueta convencional do recorte vertical
-considerado). O \textbf{recorte principal} corresponde à etiqueta F03-4; o
-\textbf{recorte de contraste}, ao F06-1. Trata-se de duas séries distintas para
-confrontar o mesmo protocolo computacional. O vocabulário \textit{recorte} não
-implica, por si só, que se trate do mesmo poço em duas profundidades ou da mesma
-litologia dominante.
-
-Adotou-se o recorte F03-4 como estudo principal e o F06-1 como contraste qualitativo.
+\textbf{identificador de amostra} próprio (etiqueta da coluna ou série considerada).
+Dois conjuntos fixam o texto central. O \textbf{\dadosref} concentra as figuras e
+tabelas de diagnóstico multivariado (correlações, VIF, MI, SHAP, ablações). O
+\textbf{\dadosval} designa o segundo conjunto tabular onde o mesmo protocolo
+computacional é aplicado para confrontar métricas entre
+colunas; \textbf{não} se confunde com um subconjunto de validação no sentido de
+partição treino/validação \emph{dentro} da mesma coluna (essa partição continua a ser
+apenas raso versus profundo em cada coluna). O vocabulário \textit{recorte} não implica,
+por si só, o mesmo poço em duas profundidades nem litologia dominante idêntica entre
+etiquetas distintas.
 
 \subsection{Fluxo de processamento}
 O procedimento computacional segue a cadeia ilustrada na Figura~\ref{fig:fluxo}, lida
@@ -259,7 +266,7 @@ face aos demais preditores \textbf{no conjunto de treino} (bloco raso), com
 em que \(R_j^2\) é o coeficiente de determinação dessa regressão auxiliar.
 Valores elevados indicam que \(x_j\) é quase combinação linear dos
 outros preditores. Complementarmente, calcularam-se matrizes de correlação de
-Pearson e de Spearman \textbf{no treino} (figuras do recorte principal), a informação mútua (MI, \textit{mutual information})
+Pearson e de Spearman \textbf{no treino} (figuras do \dadosref), a informação mútua (MI, \textit{mutual information})
 entre cada preditor e a porosidade \textbf{também no treino}, a importância por permutação da queda de
 \(R^2\) no teste e um resumo SHAP (\textit{SHapley Additive exPlanations}) obtido com
 explicador de árvore aplicado ao modelo GBDT ajustado. Para além disso, calcularam-se
@@ -289,7 +296,7 @@ transferência entre poços globalmente favorável neste conjunto, sem uniformid
 quando o teste é F02-1, o \(R^2\) é o mais baixo da tabela e o MAE o mais alto, enquanto as outras
 três exclusões concentram-se ainda mais perto do teto numérico. Com apenas quatro recortes,
 o LOO não substitui um estudo de campo exaustivo nem documenta grau de independência física
-entre poços, semelhança instrumental ou ausência de acoplamento alvo--preditores. O contraste entre recortes na Figura~\ref{fig:f06}
+entre poços, semelhança instrumental ou ausência de acoplamento alvo--preditores. O contraste visual entre \dadosref\ e \dadosval\ na Figura~\ref{fig:f06}
 compara qualidade de ajuste interno a cada coluna, não transferência aprendida
 numa coluna e testada na outra. Por fim, \(R^2\) alto pode refletir acoplamento físico e redundância
 estatística, não independência informacional entre preditores. A informação
@@ -305,14 +312,14 @@ de retreino nem generalização entre poços.
 
 \subsection{Síntese numérica}\label{subsec:metricas}
 A Tabela~\ref{tab:metricas} reúne os indicadores no conjunto de teste profundo.
-No recorte principal, as quatro variantes apresentam desempenho praticamente
+No \dadosref, as quatro variantes apresentam desempenho praticamente
 idêntico: a remoção de \(V_p\) ou de impedância, isolada ou conjunta, não
-altera de forma substantiva MAE, RMSE nem \(R^2\). Já no recorte de contraste,
+altera de forma substantiva MAE, RMSE nem \(R^2\). Já no \dadosval,
 \(R^2\) cai para a ordem de 0{,}95 com MAE e RMSE maiores, o que antecipa a discussão
 sobre dependência do intervalo litológico e da qualidade relativa das curvas.
 
-A comparação entre a primeira linha da tabela (F03-4, baseline completa) e a
-última (F06-1, baseline completa) constitui apenas \textbf{contraste qualitativo} entre
+A comparação entre a primeira linha da tabela (F03-4: todos os preditores elásticos) e a
+última (F06-1: validação; baseline completa) constitui apenas \textbf{contraste qualitativo} entre
 duas séries tabulares sob o \textbf{mesmo} protocolo interno (treino no trecho raso,
 teste no bloco profundo de 20\%); \textbf{não} corresponde ao protocolo LOO da
 Tabela~\ref{tab:loo_well}, em que um único modelo treina na união de três colunas e
@@ -322,23 +329,24 @@ avalia exclusivamente na quarta.
 \centering
 \begin{tabular}{lccc}
 \toprule
-Cenário (recorte principal, salvo nota) & MAE & RMSE & \(R^2\) \\
+Cenário & MAE & RMSE & \(R^2\) \\
 \midrule
-Todos os preditores elásticos & 0{,}00053 & 0{,}00111 & 0{,}988 \\
-Sem \(V_p\) & 0{,}00054 & 0{,}00111 & 0{,}988 \\
-Sem impedância & 0{,}00054 & 0{,}00111 & 0{,}988 \\
-Sem \(V_p\) e sem impedância & 0{,}00054 & 0{,}00111 & 0{,}988 \\
-Recorte de contraste (baseline completa) & 0{,}00222 & 0{,}00456 & 0{,}945 \\
+F03-4: todos os preditores elásticos & 0{,}00053 & 0{,}00111 & 0{,}988 \\
+F03-4: sem \(V_p\) & 0{,}00054 & 0{,}00111 & 0{,}988 \\
+F03-4: sem impedância & 0{,}00054 & 0{,}00111 & 0{,}988 \\
+F03-4: sem \(V_p\) e sem impedância & 0{,}00054 & 0{,}00111 & 0{,}988 \\
+F06-1: validação (baseline completa) & 0{,}00222 & 0{,}00456 & 0{,}945 \\
 \bottomrule
 \end{tabular}
-\caption{Desempenho no teste profundo (20\% inferior da coluna). MAE~\eqref{eq:mae} e
+\caption{Desempenho no teste profundo (20\% inferior da coluna). As quatro primeiras linhas
+referem-se ao \dadosref; a última, ao \dadosval. MAE~\eqref{eq:mae} e
 RMSE~\eqref{eq:rmse} na unidade da porosidade; \(R^2\) adimensional~\eqref{eq:r2}.}
 \label{tab:metricas}
 \end{table}
 
 A Tabela~\ref{tab:bootstrap_ic} reporta intervalos aproximados a \(95\%\) (bootstrap
 pareado, \(B=2000\), Secção~\ref{subsec:bootstrap_test}) apenas para a linha de
-\textbf{baseline completa} em cada recorte, isto é, o mesmo cenário da primeira
+\textbf{baseline completa} em cada coluna (referência e validação), isto é, o mesmo cenário da primeira
 linha da Tabela~\ref{tab:metricas} e da última (F06-1).
 
 \begin{table}[h]
@@ -346,7 +354,7 @@ linha da Tabela~\ref{tab:metricas} e da última (F06-1).
 \small
 \begin{tabular}{lp{3.5cm}p{3.5cm}p{3.2cm}}
 \toprule
-Recorte (baseline completa) & IC 95\% MAE & IC 95\% RMSE & IC 95\% \(R^2\) \\
+Coluna (baseline completa) & IC 95\% MAE & IC 95\% RMSE & IC 95\% \(R^2\) \\
 \midrule
 F03-4 & $[0{,}00043,\,0{,}00066]$ & $[0{,}00090,\,0{,}00132]$ & $[0{,}9829,\,0{,}9923]$ \\
 F06-1 & $[0{,}00156,\,0{,}00298]$ & $[0{,}00333,\,0{,}00573]$ & $[0{,}9172,\,0{,}9679]$ \\
@@ -359,10 +367,10 @@ das réplicas.}
 \end{table}
 
 \subsubsection{Robustez ao corte em profundidade}
-Mantendo o mesmo GBDT no recorte principal (F03-4), repetiu-se a partição com frações de teste
+Mantendo o mesmo GBDT no \dadosref, repetiu-se a partição com frações de teste
 profundo de \(15\%\), \(20\%\) e \(25\%\). O \(R^2\) no teste oscilou entre \(0{,}988\) e
 \(0{,}993\) (MAE e RMSE na mesma ordem de grandeza), o que indica que a conclusão de
-encaixe elevado no teste \textbf{não} depende de um único ponto de corte na grelha considerada.
+encaixe elevado no teste \textbf{não} depende de um único ponto de corte na grade considerada.
 Com profundidade máxima das árvores \(\in \{4,6,8\}\) e demais hiperparâmetros fixos, o \(R^2\) no
 mesmo corte de \(20\%\) permanece na casa de \(0{,}988\), sugerindo que a leitura de
 redundância marginal não está ancorada num único valor de profundidade de árvore.
@@ -376,7 +384,7 @@ poço retido situa-se entre \(0{,}960\) e \(0{,}999\) (valor pontual máximo \(0
 e o MAE permanece baixo em todas as linhas: o quadro indica generalização entre poços
 globalmente forte nestes quatro conjuntos de dados. A variação entre linhas ---
 notadamente o contraste de F02-1 (\(R^2=0{,}960\), MAE \(=0{,}00311\)) com F03-2, F03-4 e
-F06-1 --- mostra que \(R^2\) elevado \textbf{não} implica transferência estritamente homogénea
+F06-1 --- mostra que \(R^2\) elevado \textbf{não} implica transferência estritamente homogênea
 entre contextos distintos; qualifica um resultado globalmente favorável, sem sugerir
 instabilidade grave nem substituir validação em conjuntos mais vastos ou em condições
 de aquisição claramente independentes.
@@ -394,21 +402,20 @@ F03-4 & 2605 & 1435 & 0{,}00011 & 0{,}999 \\
 F06-1 & 3464 & 576 & 0{,}00013 & 1{,}000$^\ast$ \\
 \bottomrule
 \end{tabular}
-\caption{Validação LOO entre quatro recortes tabulares 7logs (treino na união dos outros três,
+\caption{Validação LOO entre quatro conjuntos de dados tabulares 7logs (treino na união dos outros três,
 teste exclusivo no poço da linha).
 $^\ast$Arredondamento a três casas; valor pontual \(0{,}999845\).}
 \label{tab:loo_well}
 \end{table}
 
 \subsection{Perfil de porosidade observada e prevista}
-As Figuras~\ref{fig:f03vp} a~\ref{fig:f03svpai} mostram, para o recorte principal,
+As Figuras~\ref{fig:f03vp} a~\ref{fig:f03svpai} mostram, para o \dadosref,
 a porosidade observada e a curva prevista ao longo da profundidade, com linha de
 corte entre treino e teste. Visualmente, a coincidência no trecho profundo é
 marcada em todas as variantes, o que é coerente com as quatro primeiras linhas da
 Tabela~\ref{tab:metricas} (todas no F03-4, \(R^2\approx 0{,}988\) no teste profundo).
-A Figura~\ref{fig:f06} transporta o mesmo tipo de painel para o recorte de contraste
-(F06-1): observa-se maior dispersão relativa entre observado e previsto, coerente com
-a \textbf{última linha} dessa mesma tabela --- a linha \textit{Recorte de contraste (baseline completa)},
+A Figura~\ref{fig:f06} transporta o mesmo tipo de painel para o \dadosval: observa-se maior dispersão relativa entre observado e previsto, coerente com
+a \textbf{última linha} dessa mesma tabela --- a linha \textit{F06-1: validação (baseline completa)},
 em que \(R^2=0{,}945\) (e MAE/RMSE superiores às linhas do F03-4). Isto não é uma ``queda''
 de \(R^2\) ao longo do tempo nem um efeito das figuras 2--5: é apenas o contraste entre
 dois ajustes \emph{independentes} (uma coluna versus outra) sob o mesmo protocolo de
@@ -424,7 +431,7 @@ Tabela~\ref{tab:loo_well}, aproxima precisamente essa leitura entre conjuntos de
 \begin{figure}[p]
 \centering
 \includegraphics[width=0.85\textwidth]{porosity_F03-4_com_Vp.png}
-\caption{Recorte principal: porosidade observada e prevista com todos os preditores
+\caption{\Dadosref: porosidade observada e prevista com todos os preditores
 elásticos disponíveis.}
 \label{fig:f03vp}
 \end{figure}
@@ -432,35 +439,35 @@ elásticos disponíveis.}
 \begin{figure}[p]
 \centering
 \includegraphics[width=0.85\textwidth]{porosity_F03-4_sem_Vp.png}
-\caption{Recorte principal: modelo sem \(V_p\).}
+\caption{\Dadosref: modelo sem \(V_p\).}
 \label{fig:f03svp}
 \end{figure}
 
 \begin{figure}[p]
 \centering
 \includegraphics[width=0.85\textwidth]{porosity_F03-4_sem_AI.png}
-\caption{Recorte principal: modelo sem impedância acústica.}
+\caption{\Dadosref: modelo sem impedância acústica.}
 \label{fig:f03sai}
 \end{figure}
 
 \begin{figure}[p]
 \centering
 \includegraphics[width=0.85\textwidth]{porosity_F03-4_sem_Vp_sem_AI.png}
-\caption{Recorte principal: modelo apenas com AC, \(\rho_b\), GR e \(V_c\).}
+\caption{\Dadosref: modelo apenas com AC, \(\rho_b\), GR e \(V_c\).}
 \label{fig:f03svpai}
 \end{figure}
 
 \begin{figure}[p]
 \centering
 \includegraphics[width=0.85\textwidth]{porosity_F06-1_com_Vp.png}
-\caption{Recorte de contraste: baseline completa.}
+\caption{\Dadosval: baseline completa.}
 \label{fig:f06}
 \end{figure}
 
 \subsection{Estrutura de correlação e colinearidade}
 As Figuras~\ref{fig:pearson} e~\ref{fig:spearman} evidenciam correlações lineares
 e monótonas quase unitárias entre AC, \(\rho_b\), impedância e \(V_p\), bem
-como correlação forte deste bloco com a porosidade \textbf{no recorte principal}.
+como correlação forte deste bloco com a porosidade \textbf{no \dadosref}.
 O padrão sustenta a hipótese de um subespaço elástico de dimensão efetiva
 baixa neste conjunto: várias colunas movem-se em conjunto, em vez de oferecer
 direções independentes no espaço das variáveis.
@@ -490,7 +497,7 @@ GR & $8{,}3 \times 10^1$ \\
 $V_c$ & $8{,}2 \times 10^1$ \\
 \bottomrule
 \end{tabular}
-\caption{Fatores VIF aproximados no recorte principal (treino, bloco raso), calculados por~\eqref{eq:vif}.}
+\caption{Fatores VIF aproximados no \dadosref (treino, bloco raso), calculados por~\eqref{eq:vif}.}
 \label{tab:vif}
 \end{table}
 
@@ -501,15 +508,14 @@ logo o mesmo posto após \textit{ranking}) e sob \textbf{desempates} extremos
 (\textit{min} e \textit{max} na rotina de postos adotada) informa se a dependência seria
 artefato numérico ou se permanece quase determinística.
 
-No recorte principal, sobre o mesmo conjunto 7logs já filtrado por linhas
+No \dadosref, sobre o mesmo conjunto 7logs já filtrado por linhas
 completas, calcularam-se estatísticas de empates, correlações de Pearson,
 Spearman e Kendall, correlações parciais via correlação entre resíduos
-de regressões lineares ordinárias (controlo pela profundidade; controlo adicional
+de regressões lineares ordinárias (controle pela profundidade; controle adicional
 pelo bloco elástico em bruto; variantes em que preditores e profundidade entram
 como postos médios), e uma estabilidade de Spearman sob \textit{jitter} uniforme
 minúsculo repetido (80 sorteios, escala da ordem de \(10^{-8}\) face à amplitude
-das curvas). As tabelas seguintes consolidam os indicadores dessa etapa para o recorte
-principal.
+das curvas). As tabelas seguintes consolidam os indicadores dessa etapa para o \dadosref.
 
 \begin{table}[h]
 \centering
@@ -522,7 +528,7 @@ GR & 1435 & 1110 & 0{,}298 & 23 \\
 \bottomrule
 \end{tabular}
 \caption{Empates nos valores brutos: GR e \(V_c\) compartilham a mesma cardinalidade
-de valores distintos e a mesma fração de linhas em empates (recorte principal).}
+de valores distintos e a mesma fração de linhas em empates (\dadosref).}
 \label{tab:grvc_ties}
 \end{table}
 
@@ -531,21 +537,21 @@ de valores distintos e a mesma fração de linhas em empates (recorte principal)
 \small
 \begin{tabular}{p{2.6cm} p{4.9cm} c}
 \toprule
-Medida & Notação / controlo & Valor \\
+Medida & Notação / controle & Valor \\
 \midrule
 Pearson (bruto) & \(\rho_{GR,Vc}\) & 0{,}993 \\
 Spearman & \(\rho_S\) & 1{,}000 \\
 Kendall & \(\tau\) & 1{,}000 \\
-Parcial (bruto) & resíduos OLS; controlo: profundidade & 0{,}993 \\
-Parcial (postos) & resíduos OLS em postos médios; controlo: posto(prof.) & 1{,}000 \\
-Parcial (bruto) & resíduos OLS; controlo: AC, \(\rho_b\), AI, \(V_p\) & 0{,}992 \\
-Parcial (postos) & postos médios; controlo: prof.\ e elásticos (postos) & 1{,}000 \\
+Parcial (bruto) & resíduos OLS; controle: profundidade & 0{,}993 \\
+Parcial (postos) & resíduos OLS em postos médios; controle: posto(prof.) & 1{,}000 \\
+Parcial (bruto) & resíduos OLS; controle: AC, \(\rho_b\), AI, \(V_p\) & 0{,}992 \\
+Parcial (postos) & postos médios; controle: prof.\ e elásticos (postos) & 1{,}000 \\
 Spearman + \textit{jitter} & média de 80 sorteios & 0{,}999992 \\
 & desvio-padrão & \(8{,}6\times 10^{-7}\) \\
 \bottomrule
 \end{tabular}
 \caption{Associação GR--\(V_c\) e correlações parciais lineares (resíduos
-OLS; controlo \textbf{linear} apenas, sem equivalência a independência condicional geral).
+OLS; controle \textbf{linear} apenas, sem equivalência a independência condicional geral).
 Com monotonia empírica quase perfeita entre GR e \(V_c\), os \(p\)-valores
 dos testes de Spearman e de Kendall (hipótese de independência) ficam abaixo do
 que a aritmética de ponto flutuante distingue de zero, aparecendo como \(0\) na
@@ -575,13 +581,13 @@ A Tabela~\ref{tab:grvc_ties} mostra que GR e \(V_c\) não são meramente
 correlacionados: compartilham \textbf{exatamente} o mesmo número de valores distintos,
 a mesma fração de linhas em empates e a mesma multiplicidade máxima, o que
 é compatível com \(V_c\) construído a partir de GR (ou inversamente) com a
-mesma grelha de quantização. A Tabela~\ref{tab:grvc_assoc} confirma uma relação
+mesma grade de quantização. A Tabela~\ref{tab:grvc_assoc} confirma uma relação
 quase monótona perfeita (Spearman e Kendall unitários) e mantém correlação
 parcial elevada mesmo depois de linearizar profundidade ou o bloco elástico, pelo
-menos no esquema de controlo linear adotado. Uma regressão isotônica crescente
+menos no esquema de controle linear adotado. Uma regressão isotônica crescente
 \(V_c \approx f(\mathrm{GR})\) ajustada aos mesmos dados atinge \(R^2\) praticamente
 unitário e erro de reconstrução desprezível à escala da precisão finita do cálculo, o que
-quantifica a redundância monótona além das correlações clássicas. \textbf{No recorte principal, GR e \(V_c\)
+quantifica a redundância monótona além das correlações clássicas. \textbf{No \dadosref, GR e \(V_c\)
 não devem ser tratados como eixos independentes de informação:} a evidência
 sugere que um deles é, na prática, quase inteiramente reconstruível a partir do
 outro, de modo que mantê-los simultaneamente pode inflar artificialmente a dimensão
@@ -593,7 +599,7 @@ coeficiente; o \textit{jitter} deixa a Spearman estável na unidade até \(10^{-
 \centering
 \includegraphics[width=\textwidth]{gr_vc_F03-4_ranks_scatter.png}
 \caption{GR versus \(V_c\) (hexbin) e postos médios com cores por profundidade.
-Spearman e Kendall próximos de um indicam monotonia quase perfeita no recorte.}
+Spearman e Kendall próximos de um indicam monotonia quase perfeita no \dadosref.}
 \label{fig:grvc_scatter}
 \end{figure}
 
@@ -616,9 +622,9 @@ transportável entre estudos. A Tabela~\ref{tab:mi_por} quantifica essa separaç
 os quatro preditores elásticos
 ficam na casa de \(5{,}3\) nats (arredondamento à segunda casa; MI estimada no treino), enquanto GR e
 \(V_c\) permanecem perto de \(0{,}51\), isto é, magnitudes cerca de dez vezes
-menores no mesmo ajuste MI. Isto reforça que, \textbf{no recorte principal}, o
+menores no mesmo ajuste MI. Isto reforça que, \textbf{no \dadosref}, o
 bloco elástico compartilha quase o mesmo conteúdo informativo sobre o alvo, ao
-passo que GR e \(V_c\) introduzem um eixo litológico mais fraco neste recorte, sem
+passo que GR e \(V_c\) introduzem um eixo litológico mais fraco neste \dadosref, sem
 ser nulo.
 
 \begin{table}[h]
@@ -681,7 +687,7 @@ em paralelo à tabela, um indicador binário que assinala preditores cuja queda 
 \label{tab:perm_r2}
 \end{table}
 
-A Figura~\ref{fig:shap}, no mesmo modelo GBDT e no recorte principal, mostra que AC
+A Figura~\ref{fig:shap}, no mesmo modelo GBDT e no \dadosref, mostra que AC
 emerge como o principal \textbf{carregador de informação preditiva marginal} na
 base explicada: a nuvem de SHAP para AC ocupa faixa horizontal visivelmente mais larga
 do que as de AI, \(V_p\) e \(\rho_b\), sinal de que pequenas variações de AC se
@@ -698,14 +704,14 @@ do ajuste, não como atribuição causal física.
 \begin{figure}[p]
 \centering
 \includegraphics[width=\textwidth]{study_F03-4_corr_pearson.png}
-\caption{Correlações de Pearson entre preditores e porosidade (recorte principal).}
+\caption{Correlações de Pearson entre preditores e porosidade (\dadosref).}
 \label{fig:pearson}
 \end{figure}
 
 \begin{figure}[p]
 \centering
 \includegraphics[width=\textwidth]{study_F03-4_corr_spearman.png}
-\caption{Correlações de Spearman (recorte principal).}
+\caption{Correlações de Spearman (\dadosref).}
 \label{fig:spearman}
 \end{figure}
 
@@ -729,7 +735,7 @@ profundo (287 observações).}
 
 A estabilidade das métricas na Tabela~\ref{tab:metricas}, percorrida em paralelo
 com as ablações ilustradas nas Figuras~\ref{fig:f03svp}--\ref{fig:f03svpai},
-indica que, \textbf{no recorte principal} e sob o protocolo treino/teste em profundidade,
+indica que, \textbf{no \dadosref} e sob o protocolo treino/teste em profundidade,
 \(V_p\) e a impedância não acrescentam \textbf{ganho preditivo marginal detectável}
 quando AC e \(\rho_b\) já estão disponíveis com a qualidade relativa destas
 curvas. Não se trata de desvalorizar medidas físicas centrais: o experimento não
@@ -750,19 +756,19 @@ A subsecção~\ref{subsec:grvc} aprofunda o par GR--\(V_c\) sob a ótica de empa
 nos postos e de desempates extremos. As Tabelas~\ref{tab:grvc_ties}--\ref{tab:grvc_rankmethods}
 e as Figuras~\ref{fig:grvc_scatter} e~\ref{fig:grvc_methods} mostram estrutura de
 empates idêntica entre colunas, Spearman e Kendall próximos de um e correlação
-parcial ainda elevada após controlo linear pela profundidade ou pelo bloco elástico,
-o que reforça que, neste recorte, GR e \(V_c\) não funcionam como preditores
+parcial ainda elevada após controle linear pela profundidade ou pelo bloco elástico,
+o que reforça que, neste \dadosref, GR e \(V_c\) não funcionam como preditores
 litológicos independentes no espaço de entrada.
 
 O contraste com a Figura~\ref{fig:f06} e a última linha da Tabela~\ref{tab:metricas}
 mostra que o nível de \(R^2\) não é propriedade universal do modelo: depende
-do recorte. Daí a cautela ao extrapolar conclusões entre colunas distintas sem
+do \dadosref. Daí a cautela ao extrapolar conclusões entre colunas distintas sem
 protocolo de exclusão mútua no treino.
 
-\paragraph{Contraste entre recortes F03-4 e F06-1.}
-No recorte principal (F03-4), após remoção de linhas incompletas, restam
+\paragraph{Contraste entre \dadosref\ e \dadosval.}
+No \dadosref, após remoção de linhas incompletas, restam
 \(n=1435\) profundidades entre \(856\) e \(1071\,\mathrm{m}\), com porosidade média
-\(0{,}278\) e desvio-padrão \(0{,}014\). No recorte de contraste (F06-1), \(n=576\)
+\(0{,}278\) e desvio-padrão \(0{,}014\). No \dadosval, \(n=576\)
 entre \(1084\) e \(1170\,\mathrm{m}\), com porosidade média \(0{,}267\) e desvio
 \(0{,}017\). A janela vertical é distinta e o segundo conjunto é menor; a
 porosidade apresenta dispersão relativa ligeiramente maior no F06-1. Estes fatos
@@ -780,8 +786,8 @@ validação por exclusão de poço.
 
 \paragraph{Limite principal.}
 O protocolo núcleo (partição raso/profundo por coluna) caracteriza \textbf{robustez interna}
-ao recorte e ao modelo ajustado naquela coluna. A Tabela~\ref{tab:loo_well} acrescenta,
-sobre quatro recortes 7logs, evidência de encaixe elevado no poço retido em cada exclusão,
+ao conjunto de dados e ao modelo ajustado naquela coluna. A Tabela~\ref{tab:loo_well} acrescenta,
+sobre quatro conjuntos de dados 7logs, evidência de encaixe elevado no poço retido em cada exclusão,
 compatível com transferência favorável nesse conjunto finito, porém \textbf{não} uniforme
 entre linhas nem substituto de domínio geológico alargado. O teste profundo permanece,
 por construção, intra-coluna; a leitura das ablações e do diagnóstico multivariado nas
@@ -790,39 +796,39 @@ ou além dos quatro conjuntos de dados percorridos no LOO.
 
 \section{Conclusões}\label{sec:conclusoes}
 
-No recorte principal, o modelo atinge \(R^2\) elevado no teste profundo e mantém
+No \dadosref, o modelo atinge \(R^2\) elevado no teste profundo e mantém
 esse desempenho ao remover \(V_p\) ou impedância, o que é explicado, não
 contradito, pela colinearidade forte documentada nas Figuras~\ref{fig:pearson}
 e~\ref{fig:spearman} e pelos VIF da Tabela~\ref{tab:vif}. A MI (Tabela~\ref{tab:mi_por})
 e as quedas de \(R^2\) por permutação (Tabela~\ref{tab:perm_r2} e
 Figura~\ref{fig:perm}), juntamente com o SHAP (Figura~\ref{fig:shap}), indicam que,
-\textbf{no modelo ajustado e neste recorte}, AC emerge como o principal carregador de
+\textbf{no modelo ajustado e neste \dadosref}, AC emerge como o principal carregador de
 informação preditiva marginal, enquanto a maior parte da variância explicada no
 teste flui por um eixo elástico estreito no qual AI e \(V_p\) ficam preditivamente
 redundantes face a AC e \(\rho_b\), sem afastar a sua relevância física em outros
 contextos ou com outras qualidades de aquisição.
 
-O recorte de contraste lembra que a generalização espacial ou entre contextos
+O \dadosval lembra que a generalização espacial ou entre contextos
 exige desenho experimental próprio; o presente ensaio não o substitui. Os IC de
 bootstrap no teste (Tabela~\ref{tab:bootstrap_ic}) reforçam que o contraste de
-\(R^2\) entre recortes não é compatível com intervalos sobrepostos sob a
+\(R^2\) entre o \dadosref\ e o \dadosval\ não é compatível com intervalos sobrepostos sob a
 reamostragem adotada, sem por isso afastar a necessidade de protocolos entre poços.
 A revisão de dependência entre GR e \(V_c\) sob postos e empates
 (Secção~\ref{subsec:grvc}) confirma quase redundância formal entre esses
-preditores no recorte principal.
+preditores no \dadosref.
 
-O protocolo principal no recorte F03-4 caracteriza robustez interna à coluna; a
+O protocolo principal no \dadosref\ caracteriza robustez interna à coluna; a
 Tabela~\ref{tab:loo_well} acrescenta validação LOO entre quatro conjuntos de dados, com encaixe
 elevado em cada poço retido e heterogeneidade moderada (F02-1 mais exigente que os
 demais). Como próximos passos, \textbf{recomenda-se}: (i) alargar validação entre poços
 para mais colunas ou bases independentes quando dados estiverem disponíveis, mantendo
 exclusão mútua no treino; (ii) repetir o mesmo protocolo de diagnóstico em múltiplos
-recortes, para verificar estabilidade da leitura de redundância; (iii) quando possível,
+conjuntos de dados, para verificar estabilidade da leitura de redundância; (iii) quando possível,
 substituir ou complementar a porosidade-alvo por referência menos acoplada às curvas
 elásticas usadas como entrada.
 
-As conclusões sobre ablações, VIF, MI e SHAP no recorte principal constituem evidência
-\textbf{intra-coluna} naquele protocolo em profundidade. A síntese LOO aplica-se ao
+As conclusões sobre ablações, VIF, MI e SHAP no \dadosref constituem evidência
+\textbf{intra-coluna} naquele protocolo em profundidade. A síntese LOO aplica-se aos
 quatro conjuntos de dados indicados e não se estende, sem novo desenho, a outros poços,
 profundidades ou esquemas de curvas.
 

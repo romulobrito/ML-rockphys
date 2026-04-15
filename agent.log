@@ -511,6 +511,24 @@ Solucao / artefatos:
 - pdflatex OK.
 
 --------------------------------------------------------------------------------
+[2026-04-15] relatorio: PT-BR -- controlo->controle; grelha->grade; homogenea com til
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+[2026-04-15] relatorio: nomenclatura referencia F03-4 e validacao F06-1 (macros + tabela)
+--------------------------------------------------------------------------------
+- Macros \\dadosref, \\dadosval, \\Dadosref, \\Dadosval; metodologia com distincao vs
+  validacao treino/validacao dentro da coluna.
+- Tabela metricas: linhas F03-4 / F06-1 explicitas; legenda; figuras com \\Dadosref/\\Dadosval.
+- Substituicao global de "recorte principal/contraste" no corpo; correcoes LOO e texto residual.
+
+--------------------------------------------------------------------------------
+[2026-04-15] relatorio: sec. perfil porosidade -- esclarecer "ultima linha" e Tabela LOO
+--------------------------------------------------------------------------------
+- Texto 6.2: ultima linha = Tabela metricas (F06-1); nao queda temporal; distincao
+  explicita vs Tabela LOO.
+
+--------------------------------------------------------------------------------
 [2026-04-15] relatorio: evitar palavra "ficheiro" para dados; JSON como registo/saida
 --------------------------------------------------------------------------------
 - relatorio_porosidade_ml.tex: LOO e escopo usam "conjunto(s) de dados"; rastreio JSON
