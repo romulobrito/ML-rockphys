@@ -404,13 +404,22 @@ $^\ast$Arredondamento a três casas; valor pontual \(0{,}999845\).}
 As Figuras~\ref{fig:f03vp} a~\ref{fig:f03svpai} mostram, para o recorte principal,
 a porosidade observada e a curva prevista ao longo da profundidade, com linha de
 corte entre treino e teste. Visualmente, a coincidência no trecho profundo é
-marcada em todas as variantes, o que é coerente com os números da
-Tabela~\ref{tab:metricas}. A Figura~\ref{fig:f06} transporta o mesmo tipo de painel
-para o recorte de contraste: observa-se maior dispersão relativa entre observado
-e previsto, alinhada à queda de \(R^2\) na última linha da tabela. O contraste visual
-com a Figura~\ref{fig:f06} reforça o mesmo aviso: duas colunas tratadas
-isoladamente com o mesmo procedimento, sem inferência de transportabilidade entre
-poços.
+marcada em todas as variantes, o que é coerente com as quatro primeiras linhas da
+Tabela~\ref{tab:metricas} (todas no F03-4, \(R^2\approx 0{,}988\) no teste profundo).
+A Figura~\ref{fig:f06} transporta o mesmo tipo de painel para o recorte de contraste
+(F06-1): observa-se maior dispersão relativa entre observado e previsto, coerente com
+a \textbf{última linha} dessa mesma tabela --- a linha \textit{Recorte de contraste (baseline completa)},
+em que \(R^2=0{,}945\) (e MAE/RMSE superiores às linhas do F03-4). Isto não é uma ``queda''
+de \(R^2\) ao longo do tempo nem um efeito das figuras 2--5: é apenas o contraste entre
+dois ajustes \emph{independentes} (uma coluna versus outra) sob o mesmo protocolo de
+partição raso/profundo. Distingue-se da Tabela~\ref{tab:loo_well}, que reporta métricas
+do protocolo LOO (poço retido). O contraste visual com a Figura~\ref{fig:f06} reforça o
+mesmo aviso: neste painel de figuras e nas linhas correspondentes da Tabela~\ref{tab:metricas},
+cada coluna tem \textbf{o seu} modelo GBDT --- treino e teste limitados aos dados daquela
+coluna (partição raso/profundo). Comparar F03-4 com F06-1 \textbf{não} significa aplicar
+ao F06-1 o estimador já ajustado no F03-4; seriam precisos dados do poço-alvo no treino
+ou um protocolo explícito de transferência. A exclusão de poço no treino, com métricas na
+Tabela~\ref{tab:loo_well}, aproxima precisamente essa leitura entre conjuntos de dados distintos.
 
 \begin{figure}[p]
 \centering
