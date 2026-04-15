@@ -35,7 +35,7 @@ de árvores de decisão com reforço por gradiente, aqui na variante baseada em
 histogramas). A avaliação usa partição treino--teste ao longo da profundidade;
 por \textbf{teste profundo}, equivalente neste documento a \textbf{bloco de teste profundo},
 entende-se o conjunto das \(20\%\) observações com maior profundidade após ordenar o
-ficheiro tabular pela coluna \texttt{Depth\_m}, mantendo o treino na fração rasa
+conjunto tabular pela profundidade mecânica registada ao longo da coluna, mantendo o treino na fração rasa
 complementar. Descrevem-se ainda ablações de preditores e o diagnóstico multivariado: correlações de Pearson
 e de Spearman e fator de inflação da variância (VIF) no treino; informação mútua
 (MI) entre cada preditor e a porosidade também no treino; importância por permutação do
@@ -45,7 +45,7 @@ preditor com base em Shapley). Complementam o quadro, no conjunto de teste profu
 o erro absoluto médio (MAE, do inglês \textit{mean absolute error}) e a raiz do
 erro quadrático médio (RMSE, \textit{root mean squared error}). No \textbf{recorte
 principal}, sob partição treino--teste ao longo da profundidade e com as curvas
-tal como exportadas, \(V_p\) e a impedância acústica (AI) não acrescentam
+tal como apresentadas nas figuras deste relatório, \(V_p\) e a impedância acústica (AI) não acrescentam
 \textbf{ganho preditivo marginal detectável} quando AC e \(\rho_b\) já entram no
 modelo: o \(R^2\) no teste profundo permanece praticamente inalterado após retirá-los.
 Isto documenta redundância preditiva \textbf{local} nesse protocolo, não
@@ -138,8 +138,8 @@ raio gama (GR), variável associada à argila (\(V_c\)) e porosidade como alvo.
 Neste relatório, \textbf{recorte} designa um \textbf{trecho vertical} da coluna
 perfilada analisado através de um \textbf{conjunto tabular 7logs completo}
 (preditor + alvo), com amostragem regular ao longo da profundidade e
-\textbf{identificador de amostra} próprio (nome de exportação do arquivo de
-dados). O \textbf{recorte principal} corresponde ao identificador F03-4; o
+\textbf{identificador de amostra} próprio (etiqueta convencional do recorte vertical
+considerado). O \textbf{recorte principal} corresponde à etiqueta F03-4; o
 \textbf{recorte de contraste}, ao F06-1. Trata-se de duas séries distintas para
 confrontar o mesmo protocolo computacional. O vocabulário \textit{recorte} não
 implica, por si só, que se trate do mesmo poço em duas profundidades ou da mesma
@@ -153,8 +153,8 @@ de cima para baixo: primeiro consolidam-se tabela de preditores e alvo; em segui
 remove-se linhas incompletas; depois separa-se o trecho mais profundo para teste,
 mantendo o trecho mais raso para treino; estima-se o \textit{Gradient Boosting}
 em histogramas (GBDT) \textbf{sem} padronização \textit{z-score} nas features,
-por coerência com modelos baseados em árvores (a padronização permanece disponível
-no código apenas para comparações opcionais com modelos lineares); calculam-se
+por coerência com modelos baseados em árvores (mantém-se, como variante opcional,
+a possibilidade de padronizar as entradas para comparação com modelos lineares); calculam-se
 MAE~\eqref{eq:mae}, RMSE~\eqref{eq:rmse} e \(R^2\)~\eqref{eq:r2} no teste, com variantes
 por ablação;
 por fim, executa-se o bloco de diagnóstico multivariado (correlações e VIF no treino,
@@ -208,8 +208,9 @@ e~\ref{sec:discussao} devem ser lidos.
 \subsection{Avaliação e ablação}\label{subsec:ablacao}
 Ao longo do texto, \textbf{teste profundo} e \textbf{bloco de teste profundo} referem-se ao
 mesmo subconjunto de linhas: as observações situadas na cauda mais profunda após
-ordenar o conjunto pela profundidade tabular (\texttt{Depth\_m}), correspondendo no
-protocolo principal a \(20\%\) dos registos (fração parametrizável no código).
+ordenar o conjunto pela profundidade mecânica tabulada, correspondendo,
+no estudo principal, a \(20\%\) dos registos mais profundos (em sensibilidades
+posteriormente reportadas utilizaram-se também \(15\%\) e \(25\%\)).
 A partição por profundidade reduz o vazamento espacial inerente a sorteios
 independentes em perfil quase contínuo: o teste corresponde a esse trecho mais
 profundo, onde a extrapolação a partir de padrões
@@ -227,7 +228,7 @@ mantendo o modelo GBDT já ajustado no treino e as predições \(\hat{y}_i\) fix
 aplicou-se \textbf{bootstrap pareado}: sorteiam-se \(n\) índices do teste com
 reposição, recalculam-se MAE, RMSE e \(R^2\) sobre o par \((y,\hat{y})\)
 reamostrado e repetem-se \(B=2000\) réplicas com semente pseudoaleatória fixa
-(\texttt{numpy}, semente \(0\)). Os quantis empíricos \(2{,}5\%\) e \(97{,}5\%\)
+(com réplicas independentes e semente pseudoaleatória fixa igual a zero). Os quantis empíricos \(2{,}5\%\) e \(97{,}5\%\)
 definem intervalos bilaterais aproximados a \(95\%\). Esta incerteza refere-se à
 variação das métricas sob reamostragem das observações de teste, \textbf{não}
 à variância de retreino do estimador nem à transferência entre poços.
@@ -245,9 +246,13 @@ outros preditores. Complementarmente, calcularam-se matrizes de correlação de
 Pearson e de Spearman \textbf{no treino} (figuras do recorte principal), a informação mútua (MI, \textit{mutual information})
 entre cada preditor e a porosidade \textbf{também no treino}, a importância por permutação da queda de
 \(R^2\) no teste e um resumo SHAP (\textit{SHapley Additive exPlanations}) obtido com
-explicador de árvore aplicado ao modelo GBDT ajustado. As correlações no conjunto completo
-(antes do corte) são exportadas como ficheiro auxiliar para EDA, mas não substituem as
-matrizes do treino nas figuras reportadas. A permutação e o SHAP reutilizam o mesmo modelo
+explicador de árvore aplicado ao modelo GBDT ajustado. Para além disso, calcularam-se
+correlações de Pearson e de Spearman sobre o \textbf{conjunto completo} de linhas válidas
+\textbf{antes} da partição treino--teste, com o único propósito de \textbf{análise exploratória
+dos dados}: oferecem uma visão global do acoplamento linear e monótono entre variáveis
+sem impor o mesmo protocolo de exclusão do bloco profundo. Esses resumos exploratórios
+\textbf{não} sustentam as figuras nem a discussão principal do modelo, que permanecem
+ancoradas às matrizes obtidas apenas no treino. A permutação e o SHAP reutilizam o mesmo modelo
 e o mesmo teste profundo. Sobre as features standardizadas do treino, uma PCA sintética
 indica que as duas primeiras componentes explicam cerca de \(99{,}9\%\) da variância acumulada,
 coerente com subespaço elástico de dimensão efetiva baixa; o número de condição (norma espectral)
@@ -258,16 +263,16 @@ alinhado aos VIF extremos.
 
 As curvas e a porosidade tratam-se como co-registradas na profundidade informada,
 sem corrigir deslocamentos instrumentais. O protocolo principal permanece, por
-construção, \textbf{intra-coluna} (corte vertical num único ficheiro). O ensaio
+construção, \textbf{intra-coluna} (corte vertical num único conjunto tabular). O ensaio
 \textit{leave-one-well-out} da Tabela~\ref{tab:loo_well} aproxima exclusão mútua
-entre ficheiros, mas com apenas quatro poços não substitui um estudo de campo
+entre conjuntos tabulares distintos, mas com apenas quatro poços não substitui um estudo de campo
 exaustivo: os \(R^2\) por linha variam e um caso (F02-1 como teste) desvia
 substancialmente dos demais. O contraste entre recortes na Figura~\ref{fig:f06}
 compara qualidade de ajuste interno a cada coluna, não transferência aprendida
 numa coluna e testada na outra. Por fim, \(R^2\) alto pode refletir acoplamento físico e redundância
 estatística, não independência informacional entre preditores. A informação
-mútua estimada por \texttt{mutual\_info\_regression} (mesma pilha numérica do
-ensaio) tem \textbf{magnitude absoluta} sensível a hiperparâmetros internos do
+mútua obtida pelo estimador de informação mútua adotado na rotina computacional do
+ensaio tem \textbf{magnitude absoluta} sensível a hiperparâmetros internos do
 estimador; no texto, a leitura prioritária é a \textbf{ordenação} entre
 preditores e a separação de ordens de grandeza, não a calibração de nats
 entre estudos distintos. O bootstrap no teste (Secção~\ref{subsec:bootstrap_test})
@@ -331,17 +336,17 @@ das réplicas.}
 \end{table}
 
 \subsubsection{Robustez ao corte em profundidade}
-Mantendo o mesmo GBDT e o ficheiro F03-4, repetiu-se a partição com frações de teste
+Mantendo o mesmo GBDT no recorte principal (F03-4), repetiu-se a partição com frações de teste
 profundo de \(15\%\), \(20\%\) e \(25\%\). O \(R^2\) no teste oscilou entre \(0{,}988\) e
 \(0{,}993\) (MAE e RMSE na mesma ordem de grandeza), o que indica que a conclusão de
 ajuste forte \textbf{não} depende de um único ponto de corte na grelha considerada.
-Com \texttt{max\_depth} \(\in \{4,6,8\}\) e demais hiperparâmetros fixos, o \(R^2\) no
+Com profundidade máxima das árvores \(\in \{4,6,8\}\) e demais hiperparâmetros fixos, o \(R^2\) no
 mesmo corte de \(20\%\) permanece na casa de \(0{,}988\), sugerindo que a leitura de
 redundância marginal não está ancorada num único valor de profundidade de árvore.
 
 \subsubsection{Exclusão mútua entre poços (\textit{leave-one-well-out})}
 Para aproximar a crítica de generalização \textbf{entre} colunas, treinou-se o mesmo tipo
-de GBDT na união de três ficheiros 7logs e testou-se no quarto, percorrendo os quatro
+de GBDT na união de três recortes tabulares 7logs e testou-se no quarto, percorrendo os quatro
 poços disponíveis (F02-1, F03-2, F03-4, F06-1). O \(R^2\) no poço retido varia
 substancialmente (Tabela~\ref{tab:loo_well}): permanece elevado quando o teste é
 F03-2, F03-4 ou F06-1, mas cai para cerca de \(0{,}96\) quando o teste é F02-1, o que
@@ -361,7 +366,7 @@ F03-4 & 2605 & 1435 & 0{,}00011 & 0{,}999 \\
 F06-1 & 3464 & 576 & 0{,}00013 & 1{,}000$^\ast$ \\
 \bottomrule
 \end{tabular}
-\caption{LOO entre quatro ficheiros 7logs: treino na união dos outros três, teste no poço da linha.
+\caption{LOO entre quatro recortes tabulares 7logs: treino na união dos outros três, teste no poço da linha.
 $^\ast$Arredondamento a três casas; valor pontual \(0{,}999845\).}
 \label{tab:loo_well}
 \end{table}
@@ -455,7 +460,7 @@ $V_c$ & $8{,}2 \times 10^1$ \\
 O par GR--\(V_c\) aparece nas matrizes de correlação com associação forte,
 mas a leitura sob \textbf{empates nos postos} (vários pontos com o mesmo valor,
 logo o mesmo posto após \textit{ranking}) e sob \textbf{desempates} extremos
-(\textit{min} e \textit{max} do \texttt{rankdata}) informa se a dependência seria
+(\textit{min} e \textit{max} na rotina de postos adotada) informa se a dependência seria
 artefato numérico ou se permanece quase determinística.
 
 No recorte principal, sobre o mesmo conjunto 7logs já filtrado por linhas
@@ -522,8 +527,8 @@ posto(GR) $\backslash$ posto(\(V_c\)) & \textit{average} & \textit{min} & \texti
 \textit{max} & 0{,}999991 & 0{,}999965 & 1{,}000000 \\
 \bottomrule
 \end{tabular}
-\caption{Sensibilidade ao desempate: Pearson entre postos definidos com
-\texttt{rankdata(..., method)} (\textit{scipy}); valores fora da diagonal diferem
+\caption{Sensibilidade ao desempate: Pearson entre postos obtidos com os métodos
+\textit{average}, \textit{min} e \textit{max} de desempate; valores fora da diagonal diferem
 só na sexta casa decimal.}
 \label{tab:grvc_rankmethods}
 \end{table}
@@ -537,7 +542,7 @@ quase monótona perfeita (Spearman e Kendall unitários) e mantém correlação
 parcial elevada mesmo depois de linearizar profundidade ou o bloco elástico, pelo
 menos no esquema de controlo linear adotado. Uma regressão isotônica crescente
 \(V_c \approx f(\mathrm{GR})\) ajustada aos mesmos dados atinge \(R^2\) praticamente
-unitário e erro de reconstrução desprezível na precisão numérica exportada, o que
+unitário e erro de reconstrução desprezível à escala da precisão finita do cálculo, o que
 quantifica a redundância monótona além das correlações clássicas. \textbf{No recorte principal, GR e \(V_c\)
 não devem ser tratados como eixos independentes de informação:} a evidência
 sugere que um deles é, na prática, quase inteiramente reconstruível a partir do
@@ -606,8 +611,8 @@ AI e \(V_p\) têm quedas médias uma ordem de grandeza menores; \(V_p\) fica na 
 de \(10^{-5}\), compatível com ausência de contribuição marginal detectável
 à escala do ruído de permutação. GR exibe média ligeiramente negativa
 (\(\approx -9\times 10^{-4}\)), compatível com flutuação estatística em torno
-de zero quando o preditor é redundante; \(V_c\) registra queda média nula na
-precisão exportada, coerente com o acoplamento quase determinístico a GR já
+de zero quando o preditor é redundante; \(V_c\) registra queda média nula à
+resolução numérica utilizada na tabela, coerente com o acoplamento quase determinístico a GR já
 documentado.
 
 Em presença de colinearidade forte, a importância por permutação mede
@@ -632,9 +637,9 @@ GR & \(-9{,}1\times 10^{-4}\) & \(3{,}3\times 10^{-4}\) \\
 \(V_c\) & 0{,}000 & 0{,}000 \\
 \bottomrule
 \end{tabular}
-\caption{Importância por permutação no teste profundo (25 repetições). O ficheiro
-exportado inclui a coluna booleana \texttt{likely\_redundant\_or\_noise} quando a
-queda média de \(R^2\) não é positiva.}
+\caption{Importância por permutação no teste profundo (25 repetições). Registou-se,
+em paralelo à tabela, um indicador binário que assinala preditores cuja queda média de
+\(R^2\) não é positiva, para facilitar a leitura de redundância ou ruído à escala do procedimento.}
 \label{tab:perm_r2}
 \end{table}
 

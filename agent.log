@@ -486,6 +486,19 @@ Solucao / artefatos:
 - pdflatex executado com sucesso.
 
 --------------------------------------------------------------------------------
+[2026-04-15] LaTeX: texto autocontido sem nomes de ficheiros nem APIs
+--------------------------------------------------------------------------------
+Pedido:
+- Relatorio autocontido; ao descrever saidas, explicar objetivo sem nomes de
+  ficheiros nem referencias a pastas ou codigo.
+
+Solucao / artefatos:
+- relatorio_porosidade_ml.tex: resumo e metodologia sem Depth_m em tt, sem numpy/
+  mutual_info/rankdata/scipy; explicacao da correlacao em conjunto completo como
+  analise exploratoria; permutacao sem nome de coluna; LOO e premissas com
+  conjunto tabular em vez de ficheiro; pdflatex OK.
+
+--------------------------------------------------------------------------------
 # Modelo para novas entradas (copiar abaixo)
 # --------------------------------------------------------------------------------
 # [AAAA-MM-DD] Titulo curto
