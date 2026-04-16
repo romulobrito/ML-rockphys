@@ -35,6 +35,7 @@ from run_metadata import write_experiment_json  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 
 FEATURES_7 = ["AC", "Rho_b", "AI", "Vp", "GR", "Vc"]
+ELASTIC_FEATURES = ["AC", "Rho_b", "AI", "Vp"]
 TARGET = "Porosity"
 
 
@@ -108,19 +109,59 @@ def model_input_matrix(pipe, x_df: pd.DataFrame) -> np.ndarray:
     return x_df.to_numpy(dtype=float)
 
 
+def plot_pca_cumulative_explained_variance(
+    pc_index: np.ndarray,
+    evr: np.ndarray,
+    cum: np.ndarray,
+    outfile: Path,
+) -> None:
+    """Bar chart per PC plus cumulative explained variance (elastic PCA, train)."""
+    fig, ax1 = plt.subplots(figsize=(6.5, 4.2))
+    ax1.bar(pc_index.astype(float), evr, width=0.55, color="0.78", edgecolor="0.45", label="Ratio per PC")
+    ax1.set_xlabel("Principal component index")
+    ax1.set_ylabel("Explained variance ratio")
+    ax2 = ax1.twinx()
+    ax2.step(
+        np.concatenate([[float(pc_index[0]) - 0.5], pc_index.astype(float)]),
+        np.concatenate([[0.0], cum]),
+        where="post",
+        color="0.15",
+        linewidth=2,
+        label="Cumulative",
+    )
+    ax2.plot(pc_index, cum, "o", color="0.15", markersize=5)
+    ax2.set_ylabel("Cumulative explained variance")
+    ax2.set_ylim(0.0, min(1.02, max(1.05 * float(cum[-1]), 0.05)))
+    if len(evr) > 0:
+        ax1.set_ylim(0.0, max(float(np.max(evr)) * 1.25, 0.03))
+    ax1.set_xticks(pc_index)
+    h1, l1 = ax1.get_legend_handles_labels()
+    h2, l2 = ax2.get_legend_handles_labels()
+    ax2.legend(h1 + h2, l1 + l2, loc="lower right", fontsize=9)
+    plt.title("PCA (elastic predictors, standardized train)")
+    fig.tight_layout()
+    outfile.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(outfile, dpi=150)
+    plt.close(fig)
+
+
 def pca_and_condition_reports(
     x_train: pd.DataFrame, out_dir: Path, random_state: int
 ) -> None:
-    """Condition number of corr matrix; PCA on standardized train features."""
+    """Condition number on full train correlation; PCA on elastic block for geometry."""
     cmat = x_train.corr().to_numpy(dtype=float)
     cond = float(np.linalg.cond(cmat))
     pd.DataFrame([{"condition_number_corr_train": cond}]).to_csv(
         out_dir / "feature_condition_train.csv", index=False
     )
 
+    elastic = [c for c in ELASTIC_FEATURES if c in x_train.columns]
+    if len(elastic) < 2:
+        return
+    xe = x_train[elastic]
     scaler = StandardScaler()
-    xs = scaler.fit_transform(x_train.to_numpy(dtype=float))
-    n_comp = min(x_train.shape[1], x_train.shape[0])
+    xs = scaler.fit_transform(xe.to_numpy(dtype=float))
+    n_comp = min(xe.shape[1], xe.shape[0])
     pca = PCA(n_components=n_comp, random_state=random_state).fit(xs)
     evr = pca.explained_variance_ratio_
     cum = np.cumsum(evr)
@@ -132,6 +173,26 @@ def pca_and_condition_reports(
         }
     )
     pc_df.to_csv(out_dir / "pca_explained_variance_train.csv", index=False)
+    plot_pca_cumulative_explained_variance(
+        np.arange(1, len(evr) + 1),
+        evr,
+        cum,
+        out_dir / "pca_cumulative_variance_elastic_train.png",
+    )
+
+    scaler_all = StandardScaler()
+    xs_all = scaler_all.fit_transform(x_train.to_numpy(dtype=float))
+    n_all = min(x_train.shape[1], x_train.shape[0])
+    pca_all = PCA(n_components=n_all, random_state=random_state).fit(xs_all)
+    evr_all = pca_all.explained_variance_ratio_
+    cum_all = np.cumsum(evr_all)
+    pd.DataFrame(
+        {
+            "PC_index": np.arange(1, len(evr_all) + 1),
+            "explained_variance_ratio": evr_all,
+            "cumulative_explained_variance": cum_all,
+        }
+    ).to_csv(out_dir / "pca_explained_variance_all_predictors_train.csv", index=False)
 
 
 def main() -> int:

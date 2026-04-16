@@ -128,6 +128,10 @@ def main() -> int:
     copy_fig(fs / "corr_spearman.png", DOCS_FIGS / "study_F03-4_corr_spearman.png")
     copy_fig(fs / "permutation_importance.png", DOCS_FIGS / "study_F03-4_perm_importance.png")
     copy_fig(fs / "shap_summary.png", DOCS_FIGS / "study_F03-4_shap_summary.png")
+    copy_fig(
+        fs / "pca_cumulative_variance_elastic_train.png",
+        DOCS_FIGS / "study_F03-4_pca_cumulative_variance.png",
+    )
 
     gr = OUT / "gr_vc_rank_F03-4_7logs"
     copy_fig(gr / "gr_vc_ranks_scatter.png", DOCS_FIGS / "gr_vc_F03-4_ranks_scatter.png")

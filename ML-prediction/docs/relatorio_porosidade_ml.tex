@@ -328,7 +328,7 @@ e o mesmo teste profundo. Sobre as \textbf{features elásticas} standardizadas d
 geométrica: embora existam quatro colunas, os perfis variam \textbf{quase conjuntamente},
 de modo que quase toda a dispersão conjunta do bloco se projeta em \textbf{poucas}
 direções. Concretamente, as duas primeiras componentes principais explicam cerca de
-\(99{,}9\%\) da variância acumulada nesse subconjunto. Isto interpreta-se como evidência
+\(99{,}9\%\) da variância acumulada nesse subconjunto (Figura~\ref{fig:pca_cumvar}). Isto interpreta-se como evidência
 de \textbf{dimensão efetiva baixa}: o conjunto de estados elásticos visitados pela amostra
 ocupa, aproximadamente, um \textbf{subespaço} de dimensão intrínseca pequena dentro de
 \(\mathbb{R}^4\), em lugar de se comportarem como quatro sinais mutuamente
@@ -531,7 +531,7 @@ combinações possíveis: mudanças de AC acompanham variações coerentes de \(
 AI e \(V_p\), em vez de quatro fontes de variação ortogonais. Por \textbf{dimensão
 efetiva baixa} entende-se precisamente isto --- o volume ``real'' ocupado pelos
 dados no espaço das elásticas tem poucos graus de liberdade estatísticos, compatível
-com a síntese por PCA no treino (duas componentes concentram cerca de \(99{,}9\%\) da
+com a síntese por PCA no treino (Figura~\ref{fig:pca_cumvar}; duas componentes concentram cerca de \(99{,}9\%\) da
 variância do bloco; Secção~\ref{subsec:featstudy}). Essa imagem ajuda a explicar por
 que retirar \(V_p\) ou a impedância pode deixar o \(R^2\) quase inalterado: essas
 grandezas funcionam, neste conjunto, como \textbf{reparametrizações} do mesmo eixo
@@ -782,6 +782,14 @@ do ajuste, não como atribuição causal física.
 
 \begin{figure}[p]
 \centering
+\includegraphics[width=0.85\textwidth]{study_F03-4_pca_cumulative_variance.png}
+\caption{PCA no bloco elástico standardizado do \textbf{treino} (AC, \(\rho_b\), impedância e \(V_p\)):
+fração de variância explicada por componente e variância acumulada (leitura geométrica; não substitui o modelo preditivo).}
+\label{fig:pca_cumvar}
+\end{figure}
+
+\begin{figure}[p]
+\centering
 \includegraphics[width=0.92\textwidth]{study_F03-4_perm_importance.png}
 \caption{Importância por permutação: queda média de \(R^2\) no teste ao
 baralhar cada preditor.}
@@ -810,7 +818,7 @@ grandezas com AC e densidade.
 
 A Secção~\ref{sec:resultados} fornece a evidência multivariada que sustenta
 esta leitura: correlações quase unitárias no bloco elástico
-(Figuras~\ref{fig:pearson} e~\ref{fig:spearman}), VIF extremos na
+(Figuras~\ref{fig:pearson} e~\ref{fig:spearman}), PCA cumulativa no mesmo bloco (Figura~\ref{fig:pca_cumvar}), VIF extremos na
 Tabela~\ref{tab:vif}, MI ordenada como na Tabela~\ref{tab:mi_por}, quedas de \(R^2\)
 por permutação como na Tabela~\ref{tab:perm_r2} e na Figura~\ref{fig:perm}, e
 resumo SHAP (Figura~\ref{fig:shap}) coerente com essa hierarquia. Em conjunto, estas
