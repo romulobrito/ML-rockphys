@@ -623,6 +623,20 @@ Solucao / artefatos:
   a Figura do fluxo; posicionado apos narrativa do fluxograma; registos->registros.
 
 --------------------------------------------------------------------------------
+[2026-04-16] relatorio: references.bib + natbib (Friedman GBDT, LightGBM, sklearn, SHAP)
+--------------------------------------------------------------------------------
+Pedido:
+- Citar o paper do GBDT na subsecao do estimador; criar .bib e referencias ao longo do texto.
+
+Solucao / artefatos:
+- ML-prediction/docs/references.bib: friedman2001greedy, ke2017lightgbm, pedregosa2011scikit,
+  lundberg2017unified.
+- relatorio_porosidade_ml.tex: natbib; citacoes no resumo, GBDT, histogramas, metodologia SHAP;
+  plainnat + \\bibliography{references}; comentario de compilacao pdflatex/bibtex.
+- relatorio_porosidade_ml.bbl gerado; PDF atualizado.
+- AI_AGENT_RULES.md: tabela rapida + item 10 BibTeX; item 9 unificado com atualizacao de figs.
+
+--------------------------------------------------------------------------------
 # Modelo para novas entradas (copiar abaixo)
 # --------------------------------------------------------------------------------
 # [AAAA-MM-DD] Titulo curto

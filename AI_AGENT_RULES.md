@@ -129,9 +129,9 @@ Quando o trabalho em `ML-prediction/` produzir figuras ou resultados que devam s
 6. Referências a figuras, tabelas, seções, subseções, equações etc. devem aparecer de forma coerente no corpo do texto (não deixar figuras ou equações órfãs de menção).
 7. Utilizar fórmulas matemáticas quando agregarem valor à narrativa e à explicação.
 8. **Texto principal sem nomes de código** — Caminhos de arquivos de figuras não precisam constar no relatório. No **corpo** do `.tex`, **não** citar nomes de arquivos `.py`, comandos de CLI, pastas do repositório ou artefatos de implementação para descrever **algoritmos** ou **etapas** do fluxo. Em vez disso, descrever o **objetivo** de cada etapa, as **entradas e saídas conceituais** (dados, partição, métricas) e a **lógica** do procedimento. Quando existir **fluxograma** ou figura de fluxo no documento, apoiar a narração nele e **referenciá-lo explicitamente** (por exemplo, ``conforme a Figura do fluxo metodológico''), em coerência com a Regra 11 (itens 2 e 3). Detalhes de implementação ficam fora do PDF principal (repositório, documentação técnica ou anexos, se necessário).
-9. Incluir detalhes metodológicos relevantes para entender e justificar a abordagem; podem ser usados fluxogramas ou outras figuras de apoio.
+9. Incluir detalhes metodológicos relevantes para entender e justificar a abordagem; podem ser usados fluxogramas ou outras figuras de apoio. Atualizar **`figs/`** quando novas saídas gráficas substituírem versões anteriores relevantes para o texto, e registrar mudanças relevantes no `agent.log`.
 
-Atualizar **`figs/`** quando novas saídas gráficas substituírem versões anteriores relevantes para o texto, e registrar mudanças relevantes no `agent.log`.
+10. **Bibliografia (BibTeX)** — Quando o relatório `.tex` usar `\bibliography{references}`, manter o arquivo **`ML-prediction/docs/references.bib`** versionado com entradas completas (DOI ou venue estáveis quando existirem). Compilação típica: `pdflatex` → `bibtex` → `pdflatex` → `pdflatex` a partir de `ML-prediction/docs/`.
 
 ---
 
@@ -168,5 +168,5 @@ Nos relatórios em `.tex` (por exemplo em `ML-prediction/docs/`):
 | Memória        | `agent.log`                                      |
 | Ambiente ML    | `ML-prediction/.venv`, `requirements.txt`        |
 | Scripts ML     | `ML-prediction/scripts/`                         |
-| LaTeX / figuras | `ML-prediction/docs/*.tex`, `ML-prediction/docs/figs/` |
+| LaTeX / figuras | `ML-prediction/docs/*.tex`, `ML-prediction/docs/figs/`, `ML-prediction/docs/references.bib` |
 | Regras do agente | `AI_AGENT_RULES.md` (este arquivo)             |

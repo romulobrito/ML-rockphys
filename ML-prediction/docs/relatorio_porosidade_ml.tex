@@ -1,4 +1,6 @@
-% pdflatex relatorio_porosidade_ml.tex (executar neste diretorio)
+% Compilar neste diretorio: pdflatex relatorio_porosidade_ml.tex
+%                         bibtex relatorio_porosidade_ml
+%                         pdflatex relatorio_porosidade_ml.tex (x2)
 
 \documentclass[12pt,a4paper]{article}
 
@@ -9,6 +11,7 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{amsmath}
+\usepackage[round,authoryear]{natbib}
 \usepackage{hyperref}
 \usepackage{geometry}
 \usepackage{tikz}
@@ -38,7 +41,9 @@ aparente \(\rho_b\), impedância acústica (AI), velocidade da onda de compress�
 P (\(V_p\)), raio gama (GR) e variável associada à fração argilosa (\(V_c\)).
 O ajuste emprega um modelo GBDT (\textit{Gradient Boosting Decision Trees}, conjunto
 de árvores de decisão com reforço por gradiente, aqui na variante baseada em
-histogramas). A avaliação usa partição treino--teste ao longo da profundidade;
+histogramas; fundamentação em \citealp{friedman2001greedy}, com variantes de
+eficiência em espírito semelhante a \citealp{ke2017lightgbm} e implementação no
+ecossistema de \citealp{pedregosa2011scikit}). A avaliação usa partição treino--teste ao longo da profundidade;
 por \textbf{teste profundo}, equivalente neste documento a \textbf{bloco de teste profundo},
 entende-se o conjunto das \(20\%\) observações com maior profundidade após ordenar o
 conjunto tabular pela profundidade mecânica registrada ao longo da coluna, mantendo o treino na fração rasa
@@ -47,7 +52,7 @@ e de Spearman e fator de inflação da variância (VIF) no treino; informação 
 (MI) entre cada preditor e a porosidade também no treino; importância por permutação do
 coeficiente de determinação (\(R^2\)) no teste, e valores SHAP
 (\textit{SHapley Additive exPlanations}, decomposição aditiva do efeito de cada
-preditor com base em Shapley). Complementam o quadro, no conjunto de teste profundo,
+preditor com base em Shapley; \citealp{lundberg2017unified}). Complementam o quadro, no conjunto de teste profundo,
 o erro absoluto médio (MAE, do inglês \textit{mean absolute error}) e a raiz do
 erro quadrático médio (RMSE, \textit{root mean squared error}). No \textbf{\dadosref}, sob partição treino--teste ao longo da profundidade e com as curvas
 tal como apresentadas nas figuras deste relatório, \(V_p\) e a impedância acústica (AI) não acrescentam
@@ -171,7 +176,9 @@ O \textit{Gradient Boosting} sobre árvores de decisão (GBDT) constrói um conj
 aproxima o gradiente da função de perda em relação à predição acumulada, de modo
 que novas árvores corrigem principalmente os resíduos ainda mal explicados pelo
 conjunto anterior, em vez de forçar uma única árvore muito profunda. A predição
-final soma contribuições aditivas das árvores.
+final soma contribuições aditivas das árvores, na formulação clássica de
+\textit{gradient boosting} para aproximação gulosa por árvores fracas
+\citep{friedman2001greedy}.
 
 Neste ensaio, o GBDT é usado como \textbf{regressor de referência} sobre dados
 \textbf{tabulares} (linhas = profundidades, colunas = curvas e alvo), contexto em
@@ -186,7 +193,10 @@ A implementação adotada segue a variante \textbf{baseada em histogramas}
 intervalos (\textit{bins}) durante o treino, reduzindo o custo de procura de cortes
 em colunas com muitas observações e tendendo a estabilizar o ajuste em bases
 relativamente grandes frente a métodos que avaliam cada ponto de corte contínuo
-isoladamente.
+isoladamente. Essa estratégia de discretização alinha-se a implementações de
+\textit{boosting} de alta eficiência descritas na literatura \citep{ke2017lightgbm};
+o ajuste numérico integra o ecossistema \textit{software} de aprendizado de máquina
+documentado em \citep{pedregosa2011scikit}.
 
 Por fim, \textbf{não} se impõe padronização \textit{z-score} obrigatória nas features
 antes do GBDT: partições por limiar em árvores são invariantes a transformações
@@ -304,7 +314,7 @@ Valores elevados indicam que \(x_j\) é quase combinação linear dos
 outros preditores. Complementarmente, calcularam-se matrizes de correlação de
 Pearson e de Spearman \textbf{no treino} (figuras do \dadosref), a informação mútua (MI, \textit{mutual information})
 entre cada preditor e a porosidade \textbf{também no treino}, a importância por permutação da queda de
-\(R^2\) no teste e um resumo SHAP (\textit{SHapley Additive exPlanations}) obtido com
+\(R^2\) no teste e um resumo SHAP (\textit{SHapley Additive exPlanations}; \citealt{lundberg2017unified}) obtido com
 explicador de árvore aplicado ao modelo GBDT ajustado. Para além disso, calcularam-se
 correlações de Pearson e de Spearman sobre o \textbf{conjunto completo} de linhas válidas
 \textbf{antes} da partição treino--teste, com o único propósito de \textbf{análise exploratória
@@ -868,12 +878,7 @@ As conclusões sobre ablações, VIF, MI e SHAP no \dadosref constituem evidênc
 quatro conjuntos de dados indicados e não se estende, sem novo desenho, a outros poços,
 profundidades ou esquemas de curvas.
 
-\section*{Referências}
-
-\begin{itemize}
-  \item Pedregosa et al., Scikit-learn: Machine Learning in Python, \textit{Journal of Machine Learning Research}, 2011.
-  \item Lundberg, S. M.; Lee, S.-I., A Unified Approach to Interpreting Model Predictions,
-  \textit{Conference on Neural Information Processing Systems} (NeurIPS), 2017.
-\end{itemize}
+\bibliographystyle{plainnat}
+\bibliography{references}
 
 \end{document}
