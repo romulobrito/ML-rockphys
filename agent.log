@@ -637,6 +637,14 @@ Solucao / artefatos:
 - AI_AGENT_RULES.md: tabela rapida + item 10 BibTeX; item 9 unificado com atualizacao de figs.
 
 --------------------------------------------------------------------------------
+[2026-04-16] relatorio: explicar subespaco elastico de dimensao efetiva baixa
+--------------------------------------------------------------------------------
+- Metodologia (PCA): texto fluido sobre quatro colunas vs poucas direcoes, subespaco
+  em R^4, redundancia preditiva; amssymb para \\mathbb.
+- Resultados (correlacoes): paragrafo alinhado + remissao a subsec:featstudy; correcao
+  faixa; pdflatex+bibtex OK.
+
+--------------------------------------------------------------------------------
 # Modelo para novas entradas (copiar abaixo)
 # --------------------------------------------------------------------------------
 # [AAAA-MM-DD] Titulo curto

@@ -11,6 +11,7 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage[round,authoryear]{natbib}
 \usepackage{hyperref}
 \usepackage{geometry}
@@ -322,11 +323,21 @@ dos dados}: oferecem uma visão global do acoplamento linear e monótono entre v
 sem impor o mesmo protocolo de exclusão do bloco profundo. Esses resumos exploratórios
 \textbf{não} sustentam as figuras nem a discussão principal do modelo, que permanecem
 ancoradas às matrizes obtidas apenas no treino. A permutação e o SHAP reutilizam o mesmo modelo
-e o mesmo teste profundo. Sobre as features standardizadas do treino, uma PCA sintética
-indica que as duas primeiras componentes explicam cerca de \(99{,}9\%\) da variância acumulada,
-coerente com subespaço elástico de dimensão efetiva baixa; o número de condição (norma espectral)
-da matriz de correlação do treino é da ordem de \(10^7\), sinal de matriz mal condicionada
-alinhado aos VIF extremos.
+e o mesmo teste profundo. Sobre as \textbf{features elásticas} standardizadas do treino
+(AC, \(\rho_b\), impedância e \(V_p\)), aplicou-se uma PCA apenas como leitura
+geométrica: embora existam quatro colunas, os perfis variam \textbf{quase conjuntamente},
+de modo que quase toda a dispersão conjunta do bloco se projeta em \textbf{poucas}
+direções. Concretamente, as duas primeiras componentes principais explicam cerca de
+\(99{,}9\%\) da variância acumulada nesse subconjunto. Isto interpreta-se como evidência
+de \textbf{dimensão efetiva baixa}: o conjunto de estados elásticos visitados pela amostra
+ocupa, aproximadamente, um \textbf{subespaço} de dimensão intrínseca pequena dentro de
+\(\mathbb{R}^4\), em lugar de se comportarem como quatro sinais mutuamente
+independentes no sentido estatístico do termo. Em consequência, espera-se
+\textbf{redundância preditiva} entre essas curvas em modelos lineares ou em árvores
+que particionam o espaço de entradas. O número de condição
+(norma espectral) da matriz de correlação do treino é da ordem de \(10^7\), sinal de
+matriz mal condicionada, coerente com VIF extremos quando o mesmo bloco é visto por
+regressões auxiliares lineares.
 
 \section{Premissas e limitações}\label{sec:premissas}
 
@@ -514,9 +525,17 @@ elásticos disponíveis.}
 As Figuras~\ref{fig:pearson} e~\ref{fig:spearman} evidenciam correlações lineares
 e monótonas quase unitárias entre AC, \(\rho_b\), impedância e \(V_p\), bem
 como correlação forte deste bloco com a porosidade \textbf{no \dadosref}.
-O padrão sustenta a hipótese de um subespaço elástico de dimensão efetiva
-baixa neste conjunto: várias colunas movem-se em conjunto, em vez de oferecer
-direções independentes no espaço das variáveis.
+Formalmente, quatro curvas elásticas definem quatro coordenadas, mas o padrão de
+acoplamento mostra que a amostra percorre apenas uma \textbf{faixa estreita} de
+combinações possíveis: mudanças de AC acompanham variações coerentes de \(\rho_b\),
+AI e \(V_p\), em vez de quatro fontes de variação ortogonais. Por \textbf{dimensão
+efetiva baixa} entende-se precisamente isto --- o volume ``real'' ocupado pelos
+dados no espaço das elásticas tem poucos graus de liberdade estatísticos, compatível
+com a síntese por PCA no treino (duas componentes concentram cerca de \(99{,}9\%\) da
+variância do bloco; Secção~\ref{subsec:featstudy}). Essa imagem ajuda a explicar por
+que retirar \(V_p\) ou a impedância pode deixar o \(R^2\) quase inalterado: essas
+grandezas funcionam, neste conjunto, como \textbf{reparametrizações} do mesmo eixo
+dominante já informado por AC e \(\rho_b\), e não como eixos independentes.
 
 A Tabela~\ref{tab:vif} traduz essa leitura em termos de~\eqref{eq:vif}: fatores da
 ordem de \(10^5\) a \(10^6\) para AC, \(\rho_b\), impedância e \(V_p\) não devem
